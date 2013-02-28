@@ -1,0 +1,150 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# things I used - pygtalkrobot, virtualbox api (including http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Frontends/VBoxShell/vboxshell.py)
+
+from vboxapi import VirtualBoxManager
+from time import sleep
+
+class StarSagaAuto:
+    
+    virtual_box_manager = None
+    session = None
+    vbox = None
+    machine = None
+    
+    scancodes = {
+        'a':  0x1e,
+        'b':  0x30,
+        'c':  0x2e,
+        'd':  0x20,
+        'e':  0x12,
+        'f':  0x21,
+        'g':  0x22,
+        'h':  0x23,
+        'i':  0x17,
+        'j':  0x24,
+        'k':  0x25,
+        'l':  0x26,
+        'm':  0x32,
+        'n':  0x31,
+        'o':  0x18,
+        'p':  0x19,
+        'q':  0x10,
+        'r':  0x13,
+        's':  0x1f,
+        't':  0x14,
+        'u':  0x16,
+        'v':  0x2f,
+        'w':  0x11,
+        'x':  0x2d,
+        'y':  0x15,
+        'z':  0x2c,
+        '0':  0x0b,
+        '1':  0x02,
+        '2':  0x03,
+        '3':  0x04,
+        '4':  0x05,
+        '5':  0x06,
+        '6':  0x07,
+        '7':  0x08,
+        '8':  0x09,
+        '9':  0x0a,
+        ' ':  0x39,
+        '-':  0xc,
+        '=':  0xd,
+        '[':  0x1a,
+        ']':  0x1b,
+        ';':  0x27,
+        '\'': 0x28,
+        ',':  0x33,
+        '.':  0x34,
+        '/':  0x35,
+        '\t': 0xf,
+        '\n': 0x1c,
+        '`':  0x29
+    }
+
+    extScancodes = {
+        'ESC' :    [0x01],
+        'BKSP':    [0xe],
+        'SPACE':   [0x39],
+        'TAB':     [0x0f],
+        'CAPS':    [0x3a],
+        'ENTER':   [0x1c],
+        'LSHIFT':  [0x2a],
+        'RSHIFT':  [0x36],
+        'INS':     [0xe0, 0x52],
+        'DEL':     [0xe0, 0x53],
+        'END':     [0xe0, 0x4f],
+        'HOME':    [0xe0, 0x47],
+        'PGUP':    [0xe0, 0x49],
+        'PGDOWN':  [0xe0, 0x51],
+        'LGUI':    [0xe0, 0x5b], # GUI, aka Win, aka Apple key
+        'RGUI':    [0xe0, 0x5c],
+        'LCTR':    [0x1d],
+        'RCTR':    [0xe0, 0x1d],
+        'LALT':    [0x38],
+        'RALT':    [0xe0, 0x38],
+        'APPS':    [0xe0, 0x5d],
+        'F1':      [0x3b],
+        'F2':      [0x3c],
+        'F3':      [0x3d],
+        'F4':      [0x3e],
+        'F5':      [0x3f],
+        'F6':      [0x40],
+        'F7':      [0x41],
+        'F8':      [0x42],
+        'F9':      [0x43],
+        'F10':     [0x44 ],
+        'F11':     [0x57],
+        'F12':     [0x58],
+        'UP':      [0xe0, 0x48],
+        'LEFT':    [0xe0, 0x4b],
+        'DOWN':    [0xe0, 0x50],
+        'RIGHT':   [0xe0, 0x4d],
+    }
+    
+    KEY_UP = 0x80
+    
+    def standard_keypress(self, keys, key):
+        key_code = self.scancodes.get(key, None)
+        if key_code is not None:
+            keys.append(key_code)
+            keys.append(key_code + self.KEY_UP)
+        return key_code
+                
+    def extended_keypress(self, keys, key):
+        key_code = self.extScancodes.get(key, None)
+        if key_code is not None:
+            keys.extend(key_code)
+            keys.append(key_code[-1] + self.KEY_UP)
+        return key_code
+    
+    def send_keys(self, chars):
+        keys = []
+        for key in chars:
+            if self.standard_keypress(keys, key) is None:
+                self.extended_keypress(keys, key)
+        if keys:
+            self.session.console.keyboard.putScancodes(keys)
+            sleep(0.1)
+            
+    def send_enter(self):
+        self.send_keys(['ENTER'])
+
+    def start_star_saga(self):
+        self.virtual_box_manager = VirtualBoxManager(None, None)
+        self.vbox = self.virtual_box_manager.vbox
+        self.machine = self.vbox.findMachine("Dos622")
+        self.session = self.virtual_box_manager.mgr.getSessionObject(self.vbox)
+        progress = self.machine.launchVMProcess(self.session, "gui", "")
+        progress.waitForCompletion(-1)
+        sleep(10.0)
+        self.send_keys('b')
+        self.send_keys('n')
+        self.send_keys('o')
+            
+    def stop_star_saga(self):
+        self.session.console.powerDown()
+        
