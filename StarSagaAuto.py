@@ -148,3 +148,13 @@ class StarSagaAuto:
     def stop_star_saga(self):
         self.session.console.powerDown()
         
+    def screen_shot(self):
+        print(self.session.console.display.getScreenResolution(0))
+        
+############################################################################################################################
+if __name__ == "__main__":
+    auto = StarSagaAuto()
+    auto.start_star_saga()
+    auto.screen_shot()
+    auto.stop_star_saga()
+    

@@ -33,16 +33,12 @@ class StarSagaBot(GtalkRobot):
     auto = None
     current_user = None
     current_user_name = None
+    users = None
+
+    def __init__(self, jid, password, users):
+        super().__init__(jid, password)
+        self.users = users
     
-    #Regular Expression Pattern Tips:
-    # I or IGNORECASE <=> (?i)      case insensitive matching
-    # L or LOCALE <=> (?L)          make \w, \W, \b, \B dependent on the current locale
-    # M or MULTILINE <=> (?m)       matches every new line and not only start/end of the whole string
-    # S or DOTALL <=> (?s)          '.' matches ALL chars, including newline
-    # U or UNICODE <=> (?u)         Make \w, \W, \b, and \B dependent on the Unicode character properties database.
-    # X or VERBOSE <=> (?x)         Ignores whitespace outside character sets
-    
-    #"command_" is the command prefix, "001" is the priviledge num, "setState" is the method name.
     # This method is used to log in
     def command_001_signin(self, originalMessage, user, messageText, args):
         #the __doc__ of the function is the Regular Expression of this command, if matched, this command method will be called. 
@@ -50,17 +46,18 @@ class StarSagaBot(GtalkRobot):
         '''signin ([\S]*) ([\S]*)$(?i)'''
         name = args[0]
         password = args[1]
-
-        if (name == 'josh' and password == 'troopsneverkidsoffice') or (name == 'hp' and password == 'thenequipmentsomezoo'):
-            print('here')
-            if self.current_user:
-                self.replyMessage(originalMessage, user, 'Sorry, {0} is still logged in.'.format(self.current_user_name))
-            else:
-                self.replyMessage(originalMessage, user, 'User {0} logged in.'.format(name))
-                self.current_user = user
-                self.current_user_name = name
-        else:
-            self.replyMessage(originalMessage, user, 'who are you who who who who')
+        
+        for check_user in self.users:
+            if (check_user['name'] == name and check_user['password'] == password):
+                if self.current_user:
+                    self.replyMessage(originalMessage, user, 'Sorry, {0} is still logged in.'.format(self.current_user_name))
+                else:
+                    self.replyMessage(originalMessage, user, 'User {0} logged in.'.format(name))
+                    self.current_user = user
+                    self.current_user_name = name
+                return
+        # failed to find the user
+        self.replyMessage(originalMessage, user, 'who are you who who who who')
             
     # This method is used to log out
     def command_002_signout(self, originalMessage, user, messageText, args):
@@ -71,13 +68,27 @@ class StarSagaBot(GtalkRobot):
             self.current_user = None
             self.current_user_name = None
         else:
-            self.replyMessage(originalMessage, user, 'OK, what are you trying to pull?')
+            self.replyMessage(originalMessage, user, 'Command rejected - you can\'t sign out, you aren\'t signed in.')
+    
+    # get some help on available commands
+    def command_003_help(self, originalMessage, user, messageText, args):
+        '''help'''
+        
+        self.replyMessage(originalMessage, user, '''Available commands:
+        signin [username] [password] - sign in a user.  Only one user may be signed in at a time.
+        signout - sign out.  Obviously, only the signed in user may sign out.
+        help - prints this message.  Duh.
+        [anything] - if you are signed in, send that text to Star Saga.  If you are not signed in, does nothing.
+        ''')
     
     #This method is used to response users.
     def command_100_default(self, originalMessage, user, messageText, args):
         '''.*?(?s)(?m)'''
-        self.auto.send_keys(messageText)
-        self.replyMessage(originalMessage, user, 'sent {0}'.format(messageText))
+        if user == self.current_user:
+            self.auto.send_keys(messageText)
+            self.auto.screen_shot()
+        else:
+            self.replyMessage(originalMessage, user, 'Command rejected - you aren\'t logged in!')
 
     def start_system(self):
         self.auto = StarSagaAuto()
@@ -87,14 +98,16 @@ class StarSagaBot(GtalkRobot):
     def stop_system(self):
         self.stopBot()
         self.auto.stop_star_saga()
+    
+    @classmethod
+    def from_config(cls):
+        f = open('creds.yaml')
+        config_map = yaml.safe_load(f)
+        f.close()
+        return cls(config_map['jid'], config_map['password'], config_map['users'])
         
 ############################################################################################################################
 if __name__ == "__main__":
-    f = open('creds.yaml')
-    # use safe_load instead load
-    config_map = yaml.safe_load(f)
-    f.close()
-    print(config_map)
-    bot = StarSagaBot(config_map['jid'], config_map['password'])
+    bot = StarSagaBot.from_config()
     bot.start_system()
     bot.stop_system()
