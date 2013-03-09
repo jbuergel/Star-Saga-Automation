@@ -47,6 +47,8 @@ class StarSagaBot(GtalkRobot):
         name = args[0]
         password = args[1]
         
+        # note that we could reject right away if we have a logged in user.  But that leaks (some lame) information, so we
+        # will only tell them someone else is logged in if their credentials are OK.
         for check_user in self.users:
             if (check_user['name'] == name and check_user['password'] == password):
                 if self.current_user:
@@ -57,12 +59,11 @@ class StarSagaBot(GtalkRobot):
                     self.current_user_name = name
                 return
         # failed to find the user
-        self.replyMessage(originalMessage, user, 'who are you who who who who')
+        self.replyMessage(originalMessage, user, 'whoooooooo are you who who who who')
             
     # This method is used to log out
     def command_002_signout(self, originalMessage, user, messageText, args):
         '''signout'''
-
         if user == self.current_user:
             self.replyMessage(originalMessage, user, 'Signed out {0}.'.format(self.current_user_name))
             self.current_user = None

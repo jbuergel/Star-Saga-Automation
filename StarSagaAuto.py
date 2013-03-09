@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # things I used - pygtalkrobot, virtualbox api (including http://www.virtualbox.org/svn/vbox/trunk/src/VBox/Frontends/VBoxShell/vboxshell.py)
+# requires PIL
 
 from vboxapi import VirtualBoxManager
 from time import sleep
+import os
+import subprocess
 
 class StarSagaAuto:
     
@@ -148,8 +151,16 @@ class StarSagaAuto:
     def stop_star_saga(self):
         self.session.console.powerDown()
         
+    def screen_shot_to_file(self, file_name):
+        (width, height, color_depth) = self.session.console.display.getScreenResolution(0)
+        screen_array = self.session.console.display.takeScreenShotPNGToArray(0, width, height)
+        f = open(file_name, 'wb')
+        f.write(screen_array)
+        f.close()
+        
     def screen_shot(self):
-        print(self.session.console.display.getScreenResolution(0))
+        auto.screen_shot_to_file('screen.png')
+        #os.remove('screen.png')
         
 ############################################################################################################################
 if __name__ == "__main__":

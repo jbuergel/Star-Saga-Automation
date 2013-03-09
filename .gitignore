@@ -1,3 +1,5 @@
 /creds.yaml
 /__pycache__
 /vboxapi/__pycache__
+/tiles
+/screen*.png
