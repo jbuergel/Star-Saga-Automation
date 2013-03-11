@@ -1,0 +1,7 @@
+-> force login command
+-> backup save files
+-> turn text into links
+-> return text to caller
+-> extended keyboard commands
+-> save before exiting robot?
+-> save off tiles that are not recognized (and replace with strange character)

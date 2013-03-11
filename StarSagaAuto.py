@@ -5,7 +5,7 @@
 # requires PIL
 
 from vboxapi import VirtualBoxManager
-from time import sleep
+from time import sleep, time
 import os
 import subprocess
 
@@ -159,7 +159,7 @@ class StarSagaAuto:
         f.close()
         
     def screen_shot(self):
-        auto.screen_shot_to_file('screen.png')
+        self.screen_shot_to_file('screen{0}.png'.format(time()))
         #os.remove('screen.png')
         
 ############################################################################################################################
@@ -168,4 +168,3 @@ if __name__ == "__main__":
     auto.start_star_saga()
     auto.screen_shot()
     auto.stop_star_saga()
-    
