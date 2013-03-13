@@ -108,27 +108,42 @@ class StarSagaAuto:
         'RIGHT':   [0xe0, 0x4d],
     }
     
+    shiftedScancodes = {
+        '*':  0x09,
+    }
+    
     KEY_UP = 0x80
     
-    def standard_keypress(self, keys, key):
+    def standard_keypress(self, output_keys, key):
         key_code = self.scancodes.get(key, None)
-        if key_code is not None:
-            keys.append(key_code)
-            keys.append(key_code + self.KEY_UP)
+        if key_code:
+            output_keys.append(key_code)
+            output_keys.append(key_code + self.KEY_UP)
         return key_code
-                
-    def extended_keypress(self, keys, key):
-        key_code = self.extScancodes.get(key, None)
-        if key_code is not None:
-            keys.extend(key_code)
-            keys.append(key_code[-1] + self.KEY_UP)
+          
+    def shifted_keypress(self, output_keys, key):
+        key_code = self.shiftedScancodes.get(key, None)
+        if key_code:
+            l_shift = self.extScancodes.get('LSHIFT', None)
+            output_keys.extend(l_shift)
+            output_keys.append(key_code)
+            output_keys.append(key_code + self.KEY_UP)
+            output_keys.append(l_shift[-1] + self.KEY_UP)
+        return key_code
+          
+    def extended_keypress(self, output_keys, extended_code):
+        key_code = self.extScancodes.get(extended_code.upper(), None)
+        if key_code:
+            output_keys.extend(key_code)
+            output_keys.append(key_code[-1] + self.KEY_UP)
         return key_code
     
     def send_keys(self, chars):
         keys = []
-        for key in chars:
-            if self.standard_keypress(keys, key) is None:
-                self.extended_keypress(keys, key)
+        if not self.extended_keypress(keys, chars):
+            for key in chars:
+                if not self.standard_keypress(keys, key):
+                    self.shifted_keypress(keys, key)
         if keys:
             self.session.console.keyboard.putScancodes(keys)
             sleep(0.1)

@@ -1,7 +1,10 @@
--> force login command
--> backup save files
+-> fixed width font
 -> turn text into links
 -> return text to caller
--> extended keyboard commands
 -> save before exiting robot?
 -> save off tiles that are not recognized (and replace with strange character)
+
+* -> force login command
+* -> extended keyboard commands
+* -> '*' doesn't work for some reason
+* -> backup save files

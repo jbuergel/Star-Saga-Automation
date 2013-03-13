@@ -39,11 +39,7 @@ class StarSagaBot(GtalkRobot):
         super().__init__(jid, password)
         self.users = users
     
-    # This method is used to log in
-    def command_001_signin(self, originalMessage, user, messageText, args):
-        #the __doc__ of the function is the Regular Expression of this command, if matched, this command method will be called. 
-        #The parameter "args" is a list, which will hold the matched string in parenthesis of Regular Expression.
-        '''signin ([\S]*) ([\S]*)$(?i)'''
+    def process_signin(self, originalMessage, user, messageText, args, force):
         name = args[0]
         password = args[1]
         
@@ -51,7 +47,7 @@ class StarSagaBot(GtalkRobot):
         # will only tell them someone else is logged in if their credentials are OK.
         for check_user in self.users:
             if (check_user['name'] == name and check_user['password'] == password):
-                if self.current_user:
+                if self.current_user and not force:
                     self.replyMessage(originalMessage, user, 'Sorry, {0} is still logged in.'.format(self.current_user_name))
                 else:
                     self.replyMessage(originalMessage, user, 'User {0} logged in.'.format(name))
@@ -60,6 +56,13 @@ class StarSagaBot(GtalkRobot):
                 return
         # failed to find the user
         self.replyMessage(originalMessage, user, 'whoooooooo are you who who who who')
+    
+    # This method is used to log in
+    def command_001_signin(self, originalMessage, user, messageText, args):
+        #the __doc__ of the function is the Regular Expression of this command, if matched, this command method will be called. 
+        #The parameter "args" is a list, which will hold the matched string in parenthesis of Regular Expression.
+        '''signin ([\S]*) ([\S]*)$(?i)'''
+        self.process_signin(originalMessage, user, messageText, args, False)
             
     # This method is used to log out
     def command_002_signout(self, originalMessage, user, messageText, args):
@@ -77,12 +80,21 @@ class StarSagaBot(GtalkRobot):
         
         self.replyMessage(originalMessage, user, '''Available commands:
         signin [username] [password] - sign in a user.  Only one user may be signed in at a time.
+        force [username] [password] - signs in a user, ejecting the previous user (if any).  Only use if someone is a deadbeat!
         signout - sign out.  Obviously, only the signed in user may sign out.
         help - prints this message.  Duh.
         [anything] - if you are signed in, send that text to Star Saga.  If you are not signed in, does nothing.
+        To send special characters, put 'enter' or 'esc' on their own messages.
         ''')
     
-    #This method is used to response users.
+    # This method is used to log in
+    def command_004_force_signin(self, originalMessage, user, messageText, args):
+        #the __doc__ of the function is the Regular Expression of this command, if matched, this command method will be called. 
+        #The parameter "args" is a list, which will hold the matched string in parenthesis of Regular Expression.
+        '''force ([\S]*) ([\S]*)$(?i)'''
+        self.process_signin(originalMessage, user, messageText, args, True)
+            
+    #This method is used to pass through things to the game
     def command_100_default(self, originalMessage, user, messageText, args):
         '''.*?(?s)(?m)'''
         if user == self.current_user:
