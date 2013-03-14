@@ -8,6 +8,8 @@ from vboxapi import VirtualBoxManager
 from time import sleep, time
 import os
 import subprocess
+from TileRecognizer import TileRecognizer
+from TileSplitter import TileSplitter
 
 class StarSagaAuto:
     
@@ -15,6 +17,7 @@ class StarSagaAuto:
     session = None
     vbox = None
     machine = None
+    recognizer = TileRecognizer()
     
     scancodes = {
         'a':  0x1e,
@@ -174,12 +177,27 @@ class StarSagaAuto:
         f.close()
         
     def screen_shot(self):
-        self.screen_shot_to_file('screen{0}.png'.format(time()))
-        #os.remove('screen.png')
+        file_name = 'screen{0}.png'.format(time())
+        self.screen_shot_to_file(file_name)
+        splitter = TileSplitter(file_name)
+        response = []
+        count = 0
+        for tile in splitter.get_tile_list():
+            value = self.recognizer.recognize(tile)
+            if value is not None:
+                response.append(value)
+            else:
+                response.append('?')
+                splitter.save_single_tile(tile, count)
+            count += 1
+            if count % splitter.line_length == 0:
+                response.append('\n')
+        #os.remove(file_name)
+        return ''.join(response)
         
 ############################################################################################################################
 if __name__ == "__main__":
     auto = StarSagaAuto()
     auto.start_star_saga()
-    auto.screen_shot()
+    print(auto.screen_shot())
     auto.stop_star_saga()

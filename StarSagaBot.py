@@ -99,7 +99,8 @@ class StarSagaBot(GtalkRobot):
         '''.*?(?s)(?m)'''
         if user == self.current_user:
             self.auto.send_keys(messageText)
-            self.auto.screen_shot()
+            reply_text = self.auto.screen_shot()
+            self.replyMessage(originalMessage, user, reply_text)
         else:
             self.replyMessage(originalMessage, user, 'Command rejected - you aren\'t logged in!')
 

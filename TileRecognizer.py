@@ -13,9 +13,7 @@ class TileRecognizer():
         try:
             with open('trained_data', 'rb') as f:
                 self.trained_data = pickle.load(f)
-            print(self.trained_data)
         except:
-            print('No trained data exists.')
             self.trained_data = {}
         
     def compute_hash_from_file(self, image_path):
@@ -37,7 +35,10 @@ class TileRecognizer():
     
     def get_next_tile(self):
         return self.missing_tiles[0] if self.missing_tiles else None;
-        
+    
+    def recognize(self, tile):
+        return self.trained_data[self.compute_hash(tile)]
+    
     def record_training(self, data):
         if self.missing_tiles:
             tile_hash = self.compute_hash_from_file(self.missing_tiles[0])
