@@ -10,6 +10,7 @@ import os
 import subprocess
 from TileRecognizer import TileRecognizer
 from TileSplitter import TileSplitter
+import re
 
 class StarSagaAuto:
     
@@ -194,7 +195,7 @@ class StarSagaAuto:
             if count % splitter.line_length == 0:
                 response.append('\n')
         #os.remove(file_name)
-        return ''.join(response)
+        return re.sub('#[\\s]*([0-9]+)', lambda m: 'http://www.houseofslack.com/josh/starsaga/passages/{0}.png'.format(m.group(1)), ''.join(response))
         
 ############################################################################################################################
 if __name__ == "__main__":

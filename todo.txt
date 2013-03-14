@@ -1,8 +1,8 @@
--> turn text into links
 -> javascript map
 
 x -> fixed width font
 
+* -> turn text into links
 * -> give screen shot on log in
 * -> save off tiles that are not recognized (and replace with strange character)
 * -> return text to caller
