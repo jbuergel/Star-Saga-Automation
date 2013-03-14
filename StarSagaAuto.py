@@ -187,6 +187,7 @@ class StarSagaAuto:
             if value is not None:
                 response.append(value)
             else:
+                print('TILE NOT RECOGNIZED')
                 response.append('?')
                 splitter.save_single_tile(tile, count)
             count += 1

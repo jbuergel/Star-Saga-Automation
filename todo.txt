@@ -1,6 +1,7 @@
 -> fixed width font
 -> turn text into links
 -> save before exiting robot?
+-> give screen shot on log in
 
 * -> save off tiles that are not recognized (and replace with strange character)
 * -> return text to caller

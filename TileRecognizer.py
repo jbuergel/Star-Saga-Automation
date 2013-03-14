@@ -18,7 +18,7 @@ class TileRecognizer():
         
     def compute_hash_from_file(self, image_path):
         image = Image.open(image_path)
-        self.compute_hash(image)
+        return self.compute_hash(image)
         
     def compute_hash(self, image):
         tile_hash = hashlib.md5()
@@ -37,7 +37,8 @@ class TileRecognizer():
         return self.missing_tiles[0] if self.missing_tiles else None;
     
     def recognize(self, tile):
-        return self.trained_data[self.compute_hash(tile)]
+        tile_hash = self.compute_hash(tile)
+        return self.trained_data[tile_hash] if tile_hash in self.trained_data else None
     
     def record_training(self, data):
         if self.missing_tiles:

@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         self.btn1 = QPushButton("Train", self.cw)
         self.btn1.setGeometry(QRect(5, 5, 100, 30))
         self.connect(self.btn1, SIGNAL("clicked()"), self.doit)
-        self.missing_tiles = train_tiles.find_missing_tiles()
+        train_tiles.find_missing_tiles()
         self.text_input = QLineEdit(self.cw)
         self.text_input.setGeometry(5, 40, 100, 30)
         self.text_input.setValidator(QRegExpValidator(QRegExp("[\\S ]?")))
