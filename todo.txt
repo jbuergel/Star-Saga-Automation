@@ -1,8 +1,9 @@
--> fixed width font
 -> turn text into links
--> save before exiting robot?
--> give screen shot on log in
+-> javascript map
 
+x -> fixed width font
+
+* -> give screen shot on log in
 * -> save off tiles that are not recognized (and replace with strange character)
 * -> return text to caller
 * -> force login command

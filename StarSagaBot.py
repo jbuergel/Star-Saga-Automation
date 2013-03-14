@@ -50,7 +50,7 @@ class StarSagaBot(GtalkRobot):
                 if self.current_user and not force:
                     self.replyMessage(originalMessage, user, 'Sorry, {0} is still logged in.'.format(self.current_user_name))
                 else:
-                    self.replyMessage(originalMessage, user, 'User {0} logged in.'.format(name))
+                    self.replyMessage(originalMessage, user, self.auto.screen_shot())
                     self.current_user = user
                     self.current_user_name = name
                 return
@@ -99,11 +99,10 @@ class StarSagaBot(GtalkRobot):
         '''.*?(?s)(?m)'''
         if user == self.current_user:
             self.auto.send_keys(messageText)
-            reply_text = self.auto.screen_shot()
-            self.replyMessage(originalMessage, user, reply_text)
+            self.replyMessage(originalMessage, user, self.auto.screen_shot())
         else:
             self.replyMessage(originalMessage, user, 'Command rejected - you aren\'t logged in!')
-
+            
     def start_system(self):
         self.auto = StarSagaAuto()
         self.auto.start_star_saga()
