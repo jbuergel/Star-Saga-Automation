@@ -194,7 +194,7 @@ class StarSagaAuto:
             count += 1
             if count % splitter.line_length == 0:
                 response.append('\n')
-        #os.remove(file_name)
+        os.remove(file_name)
         return re.sub('#[\\s]*([0-9]+)', lambda m: 'http://www.houseofslack.com/josh/starsaga/passages/{0}.png'.format(m.group(1)), ''.join(response))
         
 ############################################################################################################################

@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Star Saga Map Application</title>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA3_57Sw1I5Dfyi7FGvxM6LhSBM--6JS79ei77p0nDBC-PXjGIGBSVWeTUQWCkEO4G8-giblRqX4LA9w"
+      type="text/javascript"></script>
+    <script type="text/javascript" src="starsagamap.js"></script>
+    <script type="text/javascript">
+
+    //<![CDATA[
+
+    function load() {
+      if (GBrowserIsCompatible()) {
+		copyrights = new GCopyrightCollection('');
+		
+		copyrights.addCopyright(new GCopyright(
+		    'starsaga',
+		    new GLatLngBounds(new GLatLng(-90,-180), new GLatLng(90,180)),
+		    0,
+		    ''
+		));      
+      
+		var tileset = new GTileLayer(copyrights, 0, 3);
+		tileset.getTileUrl = function(tile, zoom){
+		    return 'http://www.houseofslack.com/josh/starsaga/map/tiles/starsagamap_' + zoom + '_' + tile.x + '_' + tile.y + '.png';
+		};
+		tileset.isPng = function() { return true; }
+		tileset.getOpacity = function() { return 1.0; }
+            
+  		var ssmap = new GMapType([tileset], new GMercatorProjection(4), 'StarSaga', {tileSize:256, maxResolution:3, minResolution:0});
+  		
+        var map = new GMap2(document.getElementById("map"));
+
+		map.addMapType(ssmap);
+		try
+		{
+			map.setMapType(ssmap);
+		}
+		catch (e)
+		{
+		}
+		map.removeMapType(G_HYBRID_MAP);
+		map.removeMapType(G_SATELLITE_MAP);
+		
+        map.setCenter(new GLatLng(0, 0), 3);
+      }
+    }
+
+    //]]>
+    </script>
+  </head>
+  <body onload="load()" onunload="GUnload()">
+    <div id="map" style="width: 700px; height: 600px"></div>
+  </body>
+</html>
