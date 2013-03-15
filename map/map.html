@@ -2,56 +2,78 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
     <title>Star Saga Map Application</title>
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA3_57Sw1I5Dfyi7FGvxM6LhSBM--6JS79ei77p0nDBC-PXjGIGBSVWeTUQWCkEO4G8-giblRqX4LA9w"
-      type="text/javascript"></script>
-    <script type="text/javascript" src="starsagamap.js"></script>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqEZBzpBpOd6tbhyQzAkHwPAfZsTaATeA&sensor=false">
+    </script>
     <script type="text/javascript">
-
-    //<![CDATA[
-
-    function load() {
-      if (GBrowserIsCompatible()) {
-		copyrights = new GCopyrightCollection('');
-		
-		copyrights.addCopyright(new GCopyright(
-		    'starsaga',
-		    new GLatLngBounds(new GLatLng(-90,-180), new GLatLng(90,180)),
-		    0,
-		    ''
-		));      
-      
-		var tileset = new GTileLayer(copyrights, 0, 3);
-		tileset.getTileUrl = function(tile, zoom){
-		    return 'http://www.houseofslack.com/josh/starsaga/map/tiles/starsagamap_' + zoom + '_' + tile.x + '_' + tile.y + '.png';
+		var mapTypes = {};
+		var map;
+		var mapTypeIds = [];
+		mapTypes['Star Saga'] = {
+			getTileUrl: starsagaTileUrl,
+			tileSize: new google.maps.Size(256, 256),
+			isPng: true,
+			maxZoom: 3,
+			minZoom: 0,
+			name: 'Star Saga'
 		};
-		tileset.isPng = function() { return true; }
-		tileset.getOpacity = function() { return 1.0; }
-            
-  		var ssmap = new GMapType([tileset], new GMercatorProjection(4), 'StarSaga', {tileSize:256, maxResolution:3, minResolution:0});
-  		
-        var map = new GMap2(document.getElementById("map"));
-
-		map.addMapType(ssmap);
-		try
-		{
-			map.setMapType(ssmap);
-		}
-		catch (e)
-		{
-		}
-		map.removeMapType(G_HYBRID_MAP);
-		map.removeMapType(G_SATELLITE_MAP);
 		
-        map.setCenter(new GLatLng(0, 0), 3);
-      }
-    }
+		// Normalizes the tile URL so that tiles repeat across the x axis (horizontally) like the
+		// standard Google map tiles.
+		function starsagaTileUrl(coord, zoom) {
+			var y = coord.y;
+			var x = coord.x;
 
-    //]]>
+			// tile range in one direction range is dependent on zoom level
+			// 0 = 1 tile, 1 = 2 tiles, 2 = 4 tiles, 3 = 8 tiles, etc
+			var tileRange = 1 << zoom;
+
+			// don't repeat tiles
+			if ((x < 0 || x >= tileRange) || (y < 0 || y >= tileRange)) {
+				return null;
+			}
+
+			return "http://www.houseofslack.com/josh/starsaga/map/tiles/starsagamap_" +
+				+ zoom + "_" + coord.x + "_" + coord.y + '.png';
+		}
+
+		function initialize() {
+		
+			// push all mapType keys in to a mapTypeId array to set in the mapTypeControlOptions
+			for (var key in mapTypes) {
+				mapTypeIds.push(key);
+			}
+
+			var mapOptions = {
+				zoom: 3,
+				center: new google.maps.LatLng(0, 0),
+				mapTypeControlOptions: {
+					mapTypeIds: mapTypeIds
+				}
+			};
+		
+			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+			
+			// add the new map types to map.mapTypes
+			for (key in mapTypes) {
+				map.mapTypes.set(key, new google.maps.ImageMapType(mapTypes[key]));
+			}
+			
+			// start with the moon map type
+			map.setMapTypeId('Star Saga');
+		}
+		
+		google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
   <body onload="load()" onunload="GUnload()">
-    <div id="map" style="width: 700px; height: 600px"></div>
+    <div id="map-canvas"/>
   </body>
 </html>
