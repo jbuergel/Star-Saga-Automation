@@ -1,4 +1,8 @@
 -> javascript map
+	-> drag markers
+	-> save markers
+	-> restore markers
+	-> add captions to markers
 
 x -> fixed width font
 

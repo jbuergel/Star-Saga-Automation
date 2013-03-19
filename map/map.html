@@ -9,13 +9,18 @@
       #map-canvas { height: 100% }
     </style>
     <title>Star Saga Map Application</title>
+	<link href="map.css" rel="stylesheet" type="text/css">
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqEZBzpBpOd6tbhyQzAkHwPAfZsTaATeA&sensor=false">
     </script>
+	<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+	<script src="http://cdn.jquerytools.org/1.2.6/full/jquery.tools.min.js"></script>
     <script type="text/javascript">
 		var mapTypes = {};
 		var map;
 		var mapTypeIds = [];
+		var markersArray = [];
+		var selectedMarker;
 		mapTypes['Star Saga'] = {
 			getTileUrl: starsagaTileUrl,
 			tileSize: new google.maps.Size(256, 256),
@@ -68,12 +73,77 @@
 			
 			// start with the moon map type
 			map.setMapTypeId('Star Saga');
+			google.maps.event.addListener(map, 'click', function(event) {
+				// place a marker
+				placeMarker(event.latLng);
+			});
+			$('#prompt').overlay({
+				// some mask tweaks suitable for modal dialogs
+				mask: {
+					color: '#ebecff',
+					loadSpeed: 200,
+					opacity: 0.9
+				},
+				closeOnClick: false,
+				load: false
+			});
+			
+			$("#prompt form").submit(function(e) {
+
+				// close the overlay
+				$('#prompt').data('overlay').close();
+
+				// get user input
+				var input = $("input", this).val();
+				$("input", this).val('');
+				
+				// do something with the answer
+				selectedMarker.infoWindowToOpen = new google.maps.InfoWindow({
+					content: input
+				});
+				google.maps.event.clearListeners(selectedMarker, 'click');
+				google.maps.event.addListener(selectedMarker, 'click', function(event) {
+					this.infoWindowToOpen.open(map, this);
+				});
+
+				// do not submit the form
+				return e.preventDefault();
+			});
+		}
+		
+		function placeMarker(location) {
+            var marker = new google.maps.Marker({
+                position: location, 
+				draggable: true,
+                map: map
+            });
+
+            // add marker in markers array
+            markersArray.push(marker);
+			
+			google.maps.event.addListener(marker, 'click', function(event) {
+				console.log('here');
+				selectedMarker = marker;
+				$('#prompt').data('overlay').load();
+			});
 		}
 		
 		google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+	</script>
   </head>
-  <body onload="load()" onunload="GUnload()">
+  <body>
+	<div class="modal" id="prompt">
+	  <h2>Enter notes for your marker</h2>
+	 
+	  <!-- input form. you can press enter too -->
+	  <form>
+		<input />
+		<button type="submit"> OK </button>
+		<button type="button" class="close"> Cancel </button>
+	  </form>
+	  <br />
+	 
+	</div>	
     <div id="map-canvas"/>
   </body>
 </html>
