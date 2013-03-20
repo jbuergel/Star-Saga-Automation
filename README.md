@@ -8,13 +8,13 @@ authenticated users.  It requires a config file in order to operate, which conta
 a set of credentials for the Google Talk account.  It looks for a creds.yaml in the same directory as
 StarSagaBot.py.  Contents should look like this:
 
-jid: username@gmail.com  
-password: google_password  
-users:  
-    - name: first  
-      password: first_password  
-    - name: second  
-      password: second_password  
+    jid: username@gmail.com  
+    password: google_password  
+    users:  
+        - name: first  
+          password: first_password  
+        - name: second  
+          password: second_password  
 
 In order to operate, Oracle's VirtualBox (https://www.virtualbox.org/) must be installed on the host box.  This
 bot makes use of Python's Image library (PIL) - on Windows, I installed it from this site:
