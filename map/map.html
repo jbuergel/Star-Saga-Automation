@@ -14,6 +14,7 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqEZBzpBpOd6tbhyQzAkHwPAfZsTaATeA&sensor=false">
     </script>
 	<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="json2.js"></script>
 	<script src="http://cdn.jquerytools.org/1.2.6/full/jquery.tools.min.js"></script>
     <script type="text/javascript">
 		var mapTypes = {};
@@ -50,7 +51,6 @@
 		}
 
 		function initialize() {
-		
 			// push all mapType keys in to a mapTypeId array to set in the mapTypeControlOptions
 			for (var key in mapTypes) {
 				mapTypeIds.push(key);
@@ -76,6 +76,7 @@
 			google.maps.event.addListener(map, 'click', function(event) {
 				// place a marker
 				placeMarker(event.latLng);
+				storeMarkers();
 			});
 			$('#prompt').overlay({
 				// some mask tweaks suitable for modal dialogs
@@ -96,22 +97,28 @@
 				// get user input
 				var input = $("input", this).val();
 				$("input", this).val('');
-				
-				// do something with the answer
-				selectedMarker.infoWindowToOpen = new google.maps.InfoWindow({
-					content: input
-				});
-				google.maps.event.clearListeners(selectedMarker, 'click');
-				google.maps.event.addListener(selectedMarker, 'click', function(event) {
-					this.infoWindowToOpen.open(map, this);
-				});
+				setMarkerCaption(selectedMarker, input);
 
 				// do not submit the form
 				return e.preventDefault();
 			});
+			getStoredMarkers();
+		}
+		
+		function setMarkerCaption(marker, caption) {
+			// do something with the answer
+			marker.infoWindowToOpen = new google.maps.InfoWindow({
+				content: caption
+			});
+			google.maps.event.clearListeners(marker, 'click');
+			google.maps.event.addListener(marker, 'click', function(event) {
+				this.infoWindowToOpen.open(map, this);
+			});
+			storeMarkers();
 		}
 		
 		function placeMarker(location) {
+			console.log(location);
             var marker = new google.maps.Marker({
                 position: location, 
 				draggable: true,
@@ -122,10 +129,48 @@
             markersArray.push(marker);
 			
 			google.maps.event.addListener(marker, 'click', function(event) {
-				console.log('here');
 				selectedMarker = marker;
 				$('#prompt').data('overlay').load();
 			});
+			
+			google.maps.event.addListener(marker, 'drag', function(event) {
+				storeMarkers();
+			});
+			return marker;
+		}
+		
+		function storeMarkers() {
+			console.log(markersArray);
+			var out = [];
+			for (index in markersArray) {
+				console.log('index: ' + index);
+				var outMarker = {
+					lat: markersArray[index].getPosition().lat(),
+					lng: markersArray[index].getPosition().lng()
+				};
+				if (markersArray[index].infoWindowToOpen) {
+					outMarker.caption = markersArray[index].infoWindowToOpen.getContent();
+				}
+				out.push(outMarker);
+			}
+			console.log(out);
+			localStorage.storedMarkers = JSON.stringify(out);
+		}
+		
+		function getStoredMarkers() {
+			console.log(localStorage.storedMarkers);
+			if (localStorage.storedMarkers) {
+				var parsedMarkers = JSON.parse(localStorage.storedMarkers);
+				if (parsedMarkers) {
+					for (index in parsedMarkers) {
+						var storedMarker = parsedMarkers[index];
+						var newMarker = placeMarker(new google.maps.LatLng(storedMarker.lat, storedMarker.lng));
+						if (storedMarker.caption) {
+							setMarkerCaption(newMarker, storedMarker.caption);
+						}
+					}
+				}
+			}
 		}
 		
 		google.maps.event.addDomListener(window, 'load', initialize);
@@ -133,7 +178,8 @@
   </head>
   <body>
 	<div class="modal" id="prompt">
-	  <h2>Enter notes for your marker</h2>
+	  <h2>Notes</h2>
+	  <p>Enter your notes for your marker.</p>
 	 
 	  <!-- input form. you can press enter too -->
 	  <form>
