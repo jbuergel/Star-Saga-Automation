@@ -1,11 +1,4 @@
--> javascript map
-	-> drag markers
-	-> save markers
-	-> restore markers
-	-> add captions to markers
-
 x -> fixed width font
-
 * -> turn text into links
 * -> give screen shot on log in
 * -> save off tiles that are not recognized (and replace with strange character)
@@ -14,3 +7,8 @@ x -> fixed width font
 * -> extended keyboard commands
 * -> '*' doesn't work for some reason
 * -> backup save files
+* -> javascript map
+* 	-> drag markers
+* 	-> save markers
+* 	-> restore markers
+* 	-> add captions to markers
