@@ -1,7 +1,8 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Based on Sleek XMPP example code https://github.com/fritzy/SleekXMPP/blob/develop/examples/echo_client.py
+# Based on Sleek XMPP example code from:
+# https://github.com/fritzy/SleekXMPP/blob/develop/examples/echo_client.py
 # Copyright (c) 2012 Joshua Buergel <jbuergel@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -44,12 +45,12 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
     A simple SleekXMPP bot that will echo messages it
     receives, along with a short thank you message.
     """
-    
+
     def __init__(self, jid, password):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.current_jid = jid
-        
+
         # The session_start event will be triggered when
         # the bot establishes its connection with the server
         # and the XML streams are ready for use. We want to
@@ -61,10 +62,10 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
         # stanza is received. Be aware that that includes
         # MUC messages and error messages.
         self.add_event_handler("message", self.message)
-        self.register_plugin('xep_0030') # Service Discovery
-        self.register_plugin('xep_0004') # Data Forms
-        self.register_plugin('xep_0060') # PubSub
-        self.register_plugin('xep_0199') # XMPP Ping
+        self.register_plugin('xep_0030')  # Service Discovery
+        self.register_plugin('xep_0004')  # Data Forms
+        self.register_plugin('xep_0060')  # PubSub
+        self.register_plugin('xep_0199')  # XMPP Ping
 
     def start(self, event):
         """
@@ -97,38 +98,30 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
         if msg['type'] in ('chat', 'normal'):
             self.controller(msg)
 
-    ########################################################################################################################
     commands = None
     command_prefix = 'command_'
-    ########################################################################################################################
-    
-    #Pattern Tips:
-    # I or IGNORECASE <=> (?i)      case insensitive matching
-    # L or LOCALE <=> (?L)          make \w, \W, \b, \B dependent on the current locale
-    # M or MULTILINE <=> (?m)       matches every new line and not only start/end of the whole string
-    # S or DOTALL <=> (?s)          '.' matches ALL chars, including newline
-    # U or UNICODE <=> (?u)         Make \w, \W, \b, and \B dependent on the Unicode character properties database.
-    # X or VERBOSE <=> (?x)         Ignores whitespace outside character sets
-    
+
     #This method is the default action for all pattern in lowest priviledge
     def command_999_default(self, originalMessage, user, messageText, args):
         """.*?(?s)(?m)"""
         self.replyMessage(originalMessage, user, messageText)
 
-    ########################################################################################################################
     def replyMessage(self, originalMessage, user, replyText):
         try:
             originalMessage.reply(replyText).send()
         except:
-            print("Exception sending message: \n {0}".format(str(sys.exc_info()[1])))
-    
+            print(
+                "Exception sending message: \n {0}"
+                .format(str(sys.exc_info()[1])))
+
     def initCommands(self):
         if self.commands:
             self.commands.clear()
         else:
             self.commands = list()
         for (name, value) in inspect.getmembers(self):
-            if inspect.ismethod(value) and name.startswith(self.command_prefix):
+            if (inspect.ismethod(value) and
+                    name.startswith(self.command_prefix)):
                 self.commands.append((value.__doc__, value))
 
     def controller(self, message):
@@ -143,7 +136,9 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
                     try:
                         bounded_method(message, user, text, match_obj.groups())
                     except:
-                        self.replyMessage(message, user, "Unexpected error: \n %s" % str(sys.exc_info()[1]) )
+                        resp = ("Unexpected error: \n {0}".
+                                format(str(sys.exc_info()[1])))
+                        self.replyMessage(message, user, resp)
                     break
 
     def startBot(self):
@@ -156,7 +151,7 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
 
     def stopBot(self):
         self.disconnect(wait=True)
-                    
+
 
 if __name__ == '__main__':
     # Setup the command line arguments.

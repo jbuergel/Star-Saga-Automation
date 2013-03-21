@@ -22,10 +22,11 @@ from PyQt4 import QtGui
 import sys
 from TileRecognizer import TileRecognizer
 
+
 class MainWindow(QMainWindow):
-    
+
     tile = None
-    
+
     def display_tile(self):
         missing_tile = train_tiles.get_next_tile()
         print(missing_tile)
@@ -56,15 +57,17 @@ class MainWindow(QMainWindow):
         self.text_input.setText("")
         self.display_tile()
 
+
 class App(QApplication):
     def __init__(self, *args):
         QApplication.__init__(self, *args)
         self.main = MainWindow()
-        self.connect(self, SIGNAL("lastWindowClosed()"), self.byebye )
+        self.connect(self, SIGNAL("lastWindowClosed()"), self.byebye)
         self.main.show()
 
-    def byebye( self ):
+    def byebye(self):
         self.exit(0)
+
 
 def main(args):
     global app
@@ -74,4 +77,4 @@ def main(args):
     app.exec_()
 
 if __name__ == "__main__":
-    main(sys.argv)        
+    main(sys.argv)

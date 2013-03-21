@@ -24,14 +24,14 @@ from TileRecognizer import TileRecognizer
 from TileSplitter import TileSplitter
 import re
 
+
 class StarSagaAuto:
-    
     virtual_box_manager = None
     session = None
     vbox = None
     machine = None
     recognizer = TileRecognizer()
-    
+
     scancodes = {
         'a':  0x1e,
         'b':  0x30,
@@ -85,7 +85,7 @@ class StarSagaAuto:
     }
 
     extScancodes = {
-        'ESC' :    [0x01],
+        'ESC':     [0x01],
         'BKSP':    [0xe],
         'SPACE':   [0x39],
         'TAB':     [0x0f],
@@ -99,7 +99,7 @@ class StarSagaAuto:
         'HOME':    [0xe0, 0x47],
         'PGUP':    [0xe0, 0x49],
         'PGDOWN':  [0xe0, 0x51],
-        'LGUI':    [0xe0, 0x5b], # GUI, aka Win, aka Apple key
+        'LGUI':    [0xe0, 0x5b],  # GUI, aka Win, aka Apple key
         'RGUI':    [0xe0, 0x5c],
         'LCTR':    [0x1d],
         'RCTR':    [0xe0, 0x1d],
@@ -115,7 +115,7 @@ class StarSagaAuto:
         'F7':      [0x41],
         'F8':      [0x42],
         'F9':      [0x43],
-        'F10':     [0x44 ],
+        'F10':     [0x44],
         'F11':     [0x57],
         'F12':     [0x58],
         'UP':      [0xe0, 0x48],
@@ -123,20 +123,21 @@ class StarSagaAuto:
         'DOWN':    [0xe0, 0x50],
         'RIGHT':   [0xe0, 0x4d],
     }
-    
+
     shiftedScancodes = {
         '*':  0x09,
     }
-    
+
     KEY_UP = 0x80
-    
+    PASSAGE_URL = 'http://www.houseofslack.com/josh/starsaga/passages/{0}.png'
+
     def standard_keypress(self, output_keys, key):
         key_code = self.scancodes.get(key, None)
         if key_code:
             output_keys.append(key_code)
             output_keys.append(key_code + self.KEY_UP)
         return key_code
-          
+
     def shifted_keypress(self, output_keys, key):
         key_code = self.shiftedScancodes.get(key, None)
         if key_code:
@@ -146,14 +147,14 @@ class StarSagaAuto:
             output_keys.append(key_code + self.KEY_UP)
             output_keys.append(l_shift[-1] + self.KEY_UP)
         return key_code
-          
+
     def extended_keypress(self, output_keys, extended_code):
         key_code = self.extScancodes.get(extended_code.upper(), None)
         if key_code:
             output_keys.extend(key_code)
             output_keys.append(key_code[-1] + self.KEY_UP)
         return key_code
-    
+
     def send_keys(self, chars):
         keys = []
         if not self.extended_keypress(keys, chars):
@@ -163,7 +164,7 @@ class StarSagaAuto:
         if keys:
             self.session.console.keyboard.putScancodes(keys)
             sleep(0.1)
-            
+
     def send_enter(self):
         self.send_keys(['ENTER'])
 
@@ -178,17 +179,18 @@ class StarSagaAuto:
         self.send_keys('b')
         self.send_keys('n')
         self.send_keys('o')
-            
+
     def stop_star_saga(self):
         self.session.console.powerDown()
-        
+
     def screen_shot_to_file(self, file_name):
-        (width, height, color_depth) = self.session.console.display.getScreenResolution(0)
-        screen_array = self.session.console.display.takeScreenShotPNGToArray(0, width, height)
+        display = self.session.console.display
+        (width, height, color_depth) = display.getScreenResolution(0)
+        screen_array = display.takeScreenShotPNGToArray(0, width, height)
         f = open(file_name, 'wb')
         f.write(screen_array)
         f.close()
-        
+
     def screen_shot(self):
         file_name = 'screen{0}.png'.format(time())
         self.screen_shot_to_file(file_name)
@@ -207,9 +209,11 @@ class StarSagaAuto:
             if count % splitter.line_length == 0:
                 response.append('\n')
         os.remove(file_name)
-        return re.sub('#[\\s]*([0-9]+)', lambda m: 'http://www.houseofslack.com/josh/starsaga/passages/{0}.png'.format(m.group(1)), ''.join(response))
-        
-############################################################################################################################
+        return re.sub('#[\\s]*([0-9]+)',
+                      lambda m: PASSAGE_URL.format(m.group(1)),
+                      ''.join(response))
+
+#############################################################################
 if __name__ == "__main__":
     auto = StarSagaAuto()
     auto.start_star_saga()
