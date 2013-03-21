@@ -30,7 +30,7 @@ os.environ["VBOX_PROGRAM_PATH"] = VboxBinDir
 os.environ["VBOX_SDK_PATH"] = VboxSdkDir
 sys.path.append(VboxBinDir)
 
-from .VirtualBox import VirtualBoxReflectionInfo
+from .VirtualBox_constants import VirtualBoxReflectionInfo
 
 class PerfCollector:
     """ This class provides a wrapper over IPerformanceCollector in order to
@@ -120,9 +120,7 @@ def CustomGetAttr(self, attr):
     # try case-insensitivity workaround for class attributes (COM methods)
     for k in self.__class__.__dict__.keys():
         if k.lower() == attr.lower():
-            #import pdb; pdb.set_trace()
             setattr(self.__class__, attr, self.__class__.__dict__[k])
-            #self.__class__.__dict__[attr] = self.__class__.__dict__[k]
             return getattr(self, k)
     try:
         return _COMForward['getattr'](self,ComifyName(attr))
