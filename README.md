@@ -1,7 +1,10 @@
 Star-Saga-Automation
 ====================
 
-A python/Virtual Box based solution for running Star Saga using a Google Talk bot.
+A python/Virtual Box based solution for running Star Saga using a Google Talk bot.  When started, it will invoked
+a VirtualBox VM running Star Saga, allowing players to play the game remotely, sending commands through the
+Google Talk interface and seeing the results back on their chat window.  There's also a Google Maps version of
+the game map included.
 
 The automation solution has a few parts.  First is a Google Talk robot that responds to remote commands from
 authenticated users.  It requires a config file in order to operate, which contains a list of users as well as
