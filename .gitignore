@@ -3,3 +3,4 @@
 /vboxapi/__pycache__
 /tiles
 /screen*.png
+*.sublime-*
