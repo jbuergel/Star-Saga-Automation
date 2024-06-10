@@ -5,8 +5,8 @@
 ** is running, your changes will be overwritten later, without taking effect.
 ** Use VBoxManage or the VirtualBox Manager GUI to make changes.
 -->
-<VirtualBox xmlns="http://www.innotek.de/VirtualBox-settings" version="1.12-windows">
-  <Machine uuid="{efa23b7f-8651-4683-b500-7a997b9ec8f6}" name="Dos622" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2013-02-27T06:41:20Z">
+<VirtualBox xmlns="http://www.virtualbox.org/" version="1.19-windows">
+  <Machine uuid="{efa23b7f-8651-4683-b500-7a997b9ec8f6}" name="Dos622" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2024-06-11T05:30:39Z">
     <MediaRegistry>
       <HardDisks>
         <HardDisk uuid="{02fc95f7-6939-4dde-ab8a-5ef6a598c50a}" location="Dos622.vdi" format="VDI" type="Normal"/>
@@ -23,155 +23,95 @@
       </FloppyImages>
     </MediaRegistry>
     <ExtraData>
-      <ExtraDataItem name="GUI/LastCloseAction" value="powerOff"/>
+      <ExtraDataItem name="GUI/LastCloseAction" value="PowerOff"/>
       <ExtraDataItem name="GUI/LastGuestSizeHint" value="640,400"/>
-      <ExtraDataItem name="GUI/LastNormalWindowPosition" value="861,204,640,442"/>
+      <ExtraDataItem name="GUI/LastNormalWindowPosition" value="436,81,634,437"/>
+      <ExtraDataItem name="GUI/LastScaleWindowPosition" value="348,93,640,480"/>
+      <ExtraDataItem name="GUI/Scale" value="true"/>
     </ExtraData>
-    <Hardware version="2">
-      <CPU count="1" hotplug="false">
-        <HardwareVirtEx enabled="false" exclusive="false"/>
+    <Hardware>
+      <CPU>
+        <HardwareVirtEx enabled="false"/>
         <HardwareVirtExNestedPaging enabled="false"/>
-        <HardwareVirtExVPID enabled="true"/>
         <PAE enabled="false"/>
         <HardwareVirtExLargePages enabled="true"/>
-        <HardwareVirtForce enabled="false"/>
       </CPU>
-      <Memory RAMSize="64" PageFusion="false"/>
-      <HID Pointing="PS2Mouse" Keyboard="PS2Keyboard"/>
-      <HPET enabled="false"/>
-      <Chipset type="PIIX3"/>
-      <Boot>
-        <Order position="1" device="Floppy"/>
-        <Order position="2" device="DVD"/>
-        <Order position="3" device="HardDisk"/>
-        <Order position="4" device="None"/>
-      </Boot>
-      <Display VRAMSize="16" monitorCount="1" accelerate3D="false" accelerate2DVideo="false"/>
-      <VideoRecording enabled="false" file="Test.webm" horzRes="640" vertRes="480"/>
-      <RemoteDisplay enabled="false" authType="Null" authTimeout="5000">
+      <Memory RAMSize="64"/>
+      <Paravirt provider="Legacy"/>
+      <Display VRAMSize="16"/>
+      <RemoteDisplay>
         <VRDEProperties>
           <Property name="TCP/Ports" value="3389"/>
         </VRDEProperties>
       </RemoteDisplay>
-      <BIOS>
-        <ACPI enabled="true"/>
-        <IOAPIC enabled="false"/>
-        <Logo fadeIn="true" fadeOut="true" displayTime="0"/>
-        <BootMenu mode="MessageAndMenu"/>
-        <TimeOffset value="0"/>
-        <PXEDebug enabled="false"/>
-      </BIOS>
-      <USBController enabled="false" enabledEhci="false"/>
       <Network>
-        <Adapter slot="0" enabled="true" MACAddress="08002739CFFE" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="0" enabled="true" MACAddress="08002739CFFE">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
-          <BridgedInterface name="Intel(R) WiFi Link 5300 AGN"/>
+          <BridgedInterface name="Killer(R) Wi-Fi 6 AX1650s 160MHz Wireless Network Adapter (201D2W)"/>
         </Adapter>
-        <Adapter slot="1" enabled="false" MACAddress="080027298616" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="1" MACAddress="080027298616">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
-        <Adapter slot="2" enabled="false" MACAddress="08002733D87A" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="2" MACAddress="08002733D87A">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
-        <Adapter slot="3" enabled="false" MACAddress="08002758C70B" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="3" MACAddress="08002758C70B">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
-        <Adapter slot="4" enabled="false" MACAddress="080027E119C2" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="4" MACAddress="080027E119C2">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
-        <Adapter slot="5" enabled="false" MACAddress="080027494590" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="5" MACAddress="080027494590">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
-        <Adapter slot="6" enabled="false" MACAddress="0800276AA309" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="6" MACAddress="0800276AA309">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
-        <Adapter slot="7" enabled="false" MACAddress="0800275E3B3F" cable="true" speed="0" type="Am79C973">
+        <Adapter slot="7" MACAddress="0800275E3B3F">
           <DisabledModes>
-            <NAT>
-              <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
-              <Alias logging="false" proxy-only="false" use-same-ports="false"/>
-            </NAT>
+            <NAT localhost-reachable="true"/>
           </DisabledModes>
         </Adapter>
       </Network>
-      <UART>
-        <Port slot="0" enabled="false" IOBase="0x3f8" IRQ="4" hostMode="Disconnected"/>
-        <Port slot="1" enabled="false" IOBase="0x2f8" IRQ="3" hostMode="Disconnected"/>
-      </UART>
       <LPT>
-        <Port slot="0" enabled="false" IOBase="0x378" IRQ="7"/>
         <Port slot="1" enabled="false" IOBase="0x378" IRQ="7"/>
       </LPT>
-      <AudioAdapter controller="SB16" driver="DirectSound" enabled="true"/>
-      <RTC localOrUTC="local"/>
+      <AudioAdapter controller="SB16" driver="DirectSound" enabled="true" enabledIn="true" enabledOut="true"/>
       <SharedFolders>
         <SharedFolder name="vb" hostPath="C:\temp\vb" writable="true" autoMount="false"/>
       </SharedFolders>
-      <Clipboard mode="Disabled"/>
-      <DragAndDrop mode="Disabled"/>
-      <IO>
-        <IoCache enabled="true" size="5"/>
-        <BandwidthGroups/>
-      </IO>
-      <HostPci>
-        <Devices/>
-      </HostPci>
-      <EmulatedUSB>
-        <CardReader enabled="false"/>
-      </EmulatedUSB>
-      <Guest memoryBalloonSize="0"/>
+      <Clipboard/>
       <GuestProperties>
-        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1361000703414600500" flags=""/>
+        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1718083584230762300" flags="RDONLYGUEST"/>
       </GuestProperties>
+      <StorageControllers>
+        <StorageController name="Floppy" type="I82078" PortCount="1" useHostIOCache="true" Bootable="true">
+          <AttachedDevice type="Floppy" hotpluggable="false" port="0" device="0"/>
+          <AttachedDevice type="Floppy" hotpluggable="false" port="0" device="1"/>
+        </StorageController>
+        <StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true">
+          <AttachedDevice type="HardDisk" hotpluggable="false" port="0" device="0">
+            <Image uuid="{02fc95f7-6939-4dde-ab8a-5ef6a598c50a}"/>
+          </AttachedDevice>
+          <AttachedDevice passthrough="false" type="DVD" hotpluggable="false" port="1" device="0">
+            <Image uuid="{b722f78d-44c9-4582-8c8c-d57131ad6e21}"/>
+          </AttachedDevice>
+        </StorageController>
+      </StorageControllers>
     </Hardware>
-    <StorageControllers>
-      <StorageController name="Floppy" type="I82078" PortCount="1" useHostIOCache="true" Bootable="true">
-        <AttachedDevice type="Floppy" port="0" device="0"/>
-        <AttachedDevice type="Floppy" port="0" device="1"/>
-      </StorageController>
-      <StorageController name="IDE" type="PIIX4" PortCount="2" useHostIOCache="true" Bootable="true">
-        <AttachedDevice type="HardDisk" port="0" device="0">
-          <Image uuid="{02fc95f7-6939-4dde-ab8a-5ef6a598c50a}"/>
-        </AttachedDevice>
-        <AttachedDevice passthrough="false" type="DVD" port="1" device="0">
-          <Image uuid="{b722f78d-44c9-4582-8c8c-d57131ad6e21}"/>
-        </AttachedDevice>
-      </StorageController>
-    </StorageControllers>
   </Machine>
 </VirtualBox>

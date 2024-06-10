@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from vboxapi import VirtualBoxManager
+import virtualbox
 from time import sleep, time
 import os
 import subprocess
@@ -169,19 +169,20 @@ class StarSagaAuto:
         self.send_keys(['ENTER'])
 
     def start_star_saga(self):
-        self.virtual_box_manager = VirtualBoxManager(None, None)
-        self.vbox = self.virtual_box_manager.vbox
-        self.machine = self.vbox.findMachine("Dos622")
-        self.session = self.virtual_box_manager.mgr.getSessionObject(self.vbox)
-        progress = self.machine.launchVMProcess(self.session, "gui", "")
-        progress.waitForCompletion(-1)
-        sleep(10.0)
-        self.send_keys('b')
-        self.send_keys('n')
-        self.send_keys('o')
+        try:
+            self.virtual_box_manager = virtualbox.VirtualBox()
+            self.session = virtualbox.Session()
+            self.machine = self.virtual_box_manager.find_machine('Dos622')
+            progress = self.machine.launch_vm_process(self.session, 'gui', [])
+            progress.wait_for_completion()
+        except Exception as e:
+            print("Problem starting star saga bot: {}".format(e))
+            self.session = None
+            raise
 
     def stop_star_saga(self):
-        self.session.console.powerDown()
+        if self.session is not None:
+            self.session.console.powerDown()
 
     def screen_shot_to_file(self, file_name):
         display = self.session.console.display
@@ -217,5 +218,6 @@ class StarSagaAuto:
 if __name__ == "__main__":
     auto = StarSagaAuto()
     auto.start_star_saga()
-    print(auto.screen_shot())
-    auto.stop_star_saga()
+    if self.session is not None:
+        print(auto.screen_shot())
+        auto.stop_star_saga()

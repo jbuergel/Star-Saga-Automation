@@ -4,3 +4,6 @@
 /tiles
 /screen*.png
 *.sublime-*
+/Logs
+*.vbox-prev
+*windows.vbox

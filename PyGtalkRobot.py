@@ -24,7 +24,7 @@ import logging
 import getpass
 from optparse import OptionParser
 
-import sleekxmpp
+import slixmpp
 import re
 import inspect
 
@@ -33,13 +33,13 @@ import inspect
 # throughout SleekXMPP, we will set the default encoding
 # ourselves to UTF-8.
 if sys.version_info < (3, 0):
-    from sleekxmpp.util.misc_ops import setdefaultencoding
+    from slixmpp.util.misc_ops import setdefaultencoding
     setdefaultencoding('utf8')
 else:
     raw_input = input
 
 
-class GtalkRobot(sleekxmpp.ClientXMPP):
+class GtalkRobot(slixmpp.ClientXMPP):
 
     """
     A simple SleekXMPP bot that will echo messages it
@@ -47,7 +47,7 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
     """
 
     def __init__(self, jid, password):
-        sleekxmpp.ClientXMPP.__init__(self, jid, password)
+        slixmpp.ClientXMPP.__init__(self, jid, password)
 
         self.current_jid = jid
 
@@ -67,7 +67,7 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
         self.register_plugin('xep_0060')  # PubSub
         self.register_plugin('xep_0199')  # XMPP Ping
 
-    def start(self, event):
+    async def start(self, event):
         """
         Process the session_start event.
 
@@ -81,7 +81,7 @@ class GtalkRobot(sleekxmpp.ClientXMPP):
                      data.
         """
         self.send_presence()
-        self.get_roster()
+        await self.get_roster()
 
     def message(self, msg):
         """

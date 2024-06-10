@@ -120,6 +120,7 @@ class StarSagaBot(GtalkRobot):
                               'Command rejected - you aren\'t logged in!')
 
     def start_system(self):
+        import pdb; pdb.set_trace()
         self.auto = StarSagaAuto()
         self.auto.start_star_saga()
         self.startBot()
@@ -128,14 +129,27 @@ class StarSagaBot(GtalkRobot):
         self.stopBot()
         self.auto.stop_star_saga()
 
+    def load_creds():
+        try:
+            f = open('creds.yaml')
+            config_map = yaml.safe_load(f)
+            f.close()
+            return config_map
+        except Exception as e:
+            print('Failed to open creds.yaml')
+
     @classmethod
     def from_config(cls):
-        f = open('creds.yaml')
-        config_map = yaml.safe_load(f)
-        f.close()
-        return cls(config_map['jid'],
-                   config_map['password'],
-                   config_map['users'])
+        try:
+            f = open('creds.yaml')
+            config_map = yaml.safe_load(f)
+            f.close()
+            return cls(config_map['jid'],
+                       config_map['password'],
+                       config_map['users'])
+        except Exception as e:
+            print('Failed to open creds.yaml')
+            raise
 
 #############################################################################
 if __name__ == "__main__":
