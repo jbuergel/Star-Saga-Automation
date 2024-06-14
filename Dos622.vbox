@@ -6,7 +6,7 @@
 ** Use VBoxManage or the VirtualBox Manager GUI to make changes.
 -->
 <VirtualBox xmlns="http://www.virtualbox.org/" version="1.19-windows">
-  <Machine uuid="{efa23b7f-8651-4683-b500-7a997b9ec8f6}" name="Dos622" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2024-06-11T05:30:39Z">
+  <Machine uuid="{efa23b7f-8651-4683-b500-7a997b9ec8f6}" name="Dos622" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2024-06-14T21:50:55Z">
     <MediaRegistry>
       <HardDisks>
         <HardDisk uuid="{02fc95f7-6939-4dde-ab8a-5ef6a598c50a}" location="Dos622.vdi" format="VDI" type="Normal"/>
@@ -25,9 +25,9 @@
     <ExtraData>
       <ExtraDataItem name="GUI/LastCloseAction" value="PowerOff"/>
       <ExtraDataItem name="GUI/LastGuestSizeHint" value="640,400"/>
-      <ExtraDataItem name="GUI/LastNormalWindowPosition" value="436,81,634,437"/>
-      <ExtraDataItem name="GUI/LastScaleWindowPosition" value="348,93,640,480"/>
-      <ExtraDataItem name="GUI/Scale" value="true"/>
+      <ExtraDataItem name="GUI/LastNormalWindowPosition" value="436,81,277,174"/>
+      <ExtraDataItem name="GUI/LastScaleWindowPosition" value="448,97,640,480"/>
+      <ExtraDataItem name="GUI/RestrictedRuntimeMenus" value="Machine"/>
     </ExtraData>
     <Hardware>
       <CPU>
@@ -44,6 +44,9 @@
           <Property name="TCP/Ports" value="3389"/>
         </VRDEProperties>
       </RemoteDisplay>
+      <BIOS>
+        <SmbiosUuidLittleEndian enabled="true"/>
+      </BIOS>
       <Network>
         <Adapter slot="0" enabled="true" MACAddress="08002739CFFE">
           <DisabledModes>
@@ -87,6 +90,9 @@
           </DisabledModes>
         </Adapter>
       </Network>
+      <UART>
+        <Port slot="0" enabled="true" IOBase="0x3f8" IRQ="4" hostMode="Disconnected"/>
+      </UART>
       <LPT>
         <Port slot="1" enabled="false" IOBase="0x378" IRQ="7"/>
       </LPT>
@@ -96,7 +102,10 @@
       </SharedFolders>
       <Clipboard/>
       <GuestProperties>
-        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1718083584230762300" flags="RDONLYGUEST"/>
+        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1718401858053875700" flags="RDONLYGUEST"/>
+        <GuestProperty name="/VirtualBox/HostInfo/VBoxRev" value="162988" timestamp="1718401855150637202" flags="TRANSIENT, RDONLYGUEST"/>
+        <GuestProperty name="/VirtualBox/HostInfo/VBoxVer" value="7.0.18" timestamp="1718401855150637200" flags="TRANSIENT, RDONLYGUEST"/>
+        <GuestProperty name="/VirtualBox/HostInfo/VBoxVerExt" value="7.0.18" timestamp="1718401855150637201" flags="TRANSIENT, RDONLYGUEST"/>
       </GuestProperties>
       <StorageControllers>
         <StorageController name="Floppy" type="I82078" PortCount="1" useHostIOCache="true" Bootable="true">

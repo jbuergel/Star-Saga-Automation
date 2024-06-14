@@ -31,6 +31,7 @@ class TileRecognizer():
             with open('trained_data', 'rb') as f:
                 self.trained_data = pickle.load(f)
         except:
+            print('Failed to load trained_data')
             self.trained_data = {}
 
     def compute_hash_from_file(self, image_path):

@@ -23,7 +23,7 @@ import subprocess
 from TileRecognizer import TileRecognizer
 from TileSplitter import TileSplitter
 import re
-
+import pathlib
 
 class StarSagaAuto:
     virtual_box_manager = None
@@ -31,6 +31,9 @@ class StarSagaAuto:
     vbox = None
     machine = None
     recognizer = TileRecognizer()
+
+    def __init__(self, vbox_path):
+        self.vbox_manage_path = vbox_path + "/VBoxManage"
 
     scancodes = {
         'a':  0x1e,
@@ -130,6 +133,8 @@ class StarSagaAuto:
 
     KEY_UP = 0x80
     PASSAGE_URL = 'http://www.houseofslack.com/josh/starsaga/passages/{0}.png'
+    OPENING_SCREEN_CHECK = 'Please Describe Your Monitor:'
+    VBOX_NAME = "Dos622"
 
     def standard_keypress(self, output_keys, key):
         key_code = self.scancodes.get(key, None)
@@ -172,28 +177,60 @@ class StarSagaAuto:
         try:
             self.virtual_box_manager = virtualbox.VirtualBox()
             self.session = virtualbox.Session()
-            self.machine = self.virtual_box_manager.find_machine('Dos622')
+            self.machine = self.virtual_box_manager.find_machine(self.VBOX_NAME)
+            self.screen_info = [0]
             progress = self.machine.launch_vm_process(self.session, 'gui', [])
             progress.wait_for_completion()
+            # make sure that our screens directory is present
+            pathlib.Path('screens').mkdir(exist_ok=True)
+            # we need to wait until the screen is ready, you don't get the resolution
+            # right away when wait_for_completion() returns
+            while self.screen_info[0] == 0:
+                sleep(0.25)
+                self.screen_info = self.session.console.display.get_screen_resolution(0)
+            # check to make sure that the screen is the one we expect
+            # we'll try a maximum of ten times before we give up
+            screen_found = False
+            for ii in range(10):
+                opening_screen = self.screen_shot(save_tiles = False)
+                if self.OPENING_SCREEN_CHECK in opening_screen:
+                    screen_found = True
+                    break
+                else:
+                    sleep(0.5)
+            if not screen_found:
+                # dump out one screen for training purposes
+                self.screen_shot(save_tiles = True)
+                raise Exception("Unexpected opening screen")
         except Exception as e:
             print("Problem starting star saga bot: {}".format(e))
             self.session = None
             raise
+
+    def is_running(self):
+        return self.session is not None
 
     def stop_star_saga(self):
         if self.session is not None:
             self.session.console.powerDown()
 
     def screen_shot_to_file(self, file_name):
-        display = self.session.console.display
-        (width, height, color_depth) = display.getScreenResolution(0)
-        screen_array = display.takeScreenShotPNGToArray(0, width, height)
-        f = open(file_name, 'wb')
-        f.write(screen_array)
-        f.close()
+        # for some reason, on the latest VirtualBox API, this call is resulting in a screen
+        # shot that is not pixel-perfect, unlike previous versions. A screen shot taken
+        # manually, or with VBoxManage, is pixel-perfect. The problem is that the non-perfect
+        # screen shot makes the tile recognizer code break. So, instead, we will call out
+        # to VBoxManage, which we will assume is in the current directory.
 
-    def screen_shot(self):
-        file_name = 'screen{0}.png'.format(time())
+        # previous, non-working code to screen shot
+        #screen_array = self.session.console.display.take_screen_shot_to_array(0, self.screen_info[0], self.screen_info[1], virtualbox.library.BitmapFormat.png)
+        #f = open(file_name, 'wb')
+        #f.write(screen_array)
+        #f.close()
+
+        subprocess.run([self.vbox_manage_path, "controlvm", self.VBOX_NAME, "screenshotpng", file_name])
+
+    def screen_shot(self, save_tiles = True):
+        file_name = 'screens/screen{0}.png'.format(time())
         self.screen_shot_to_file(file_name)
         splitter = TileSplitter(file_name)
         response = []
@@ -203,20 +240,20 @@ class StarSagaAuto:
             if value is not None:
                 response.append(value)
             else:
-                print('TILE NOT RECOGNIZED')
                 response.append('?')
-                splitter.save_single_tile(tile, count)
+                if save_tiles:
+                    splitter.save_single_tile(tile, count)
             count += 1
             if count % splitter.line_length == 0:
                 response.append('\n')
-        os.remove(file_name)
+        #os.remove(file_name)
         return re.sub('#[\\s]*([0-9]+)',
                       lambda m: PASSAGE_URL.format(m.group(1)),
                       ''.join(response))
 
 #############################################################################
 if __name__ == "__main__":
-    auto = StarSagaAuto()
+    auto = StarSagaAuto("C:/Program Files/Oracle/VirtualBox")
     auto.start_star_saga()
     if self.session is not None:
         print(auto.screen_shot())

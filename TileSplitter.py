@@ -21,7 +21,8 @@ from PIL import Image
 import sys
 import glob
 from time import time
-
+import pathlib
+from TileRecognizer import TileRecognizer
 
 class TileSplitter():
     TILE_WIDTH = 16
@@ -30,6 +31,8 @@ class TileSplitter():
     line_length = 0
 
     def __init__(self, file_name):
+        # make sure our tiles directory exists
+        pathlib.Path('tiles').mkdir(exist_ok=True) 
         self.tiles = []
         image = Image.open(file_name)
         if (image.size[0] % self.TILE_WIDTH == 0 and
@@ -39,10 +42,10 @@ class TileSplitter():
             currenty = 0
             while currenty < image.size[1]:
                 while currentx < image.size[0]:
-                    self.tiles.append(image.crop(currentx,
+                    self.tiles.append(image.crop([currentx,
                                                  currenty,
                                                  currentx + self.TILE_WIDTH,
-                                                 currenty + self.TILE_HEIGHT))
+                                                 currenty + self.TILE_HEIGHT]))
                     currentx += self.TILE_WIDTH
                 currenty += self.TILE_HEIGHT
                 currentx = 0
@@ -54,7 +57,25 @@ class TileSplitter():
             count += 1
 
     def save_single_tile(self, tile, count):
-        tile.save("tiles/{0}_{1}.png".format(time(), count), "PNG")
+        tile.save("tiles/{0}_{1}.png".format(count, time()), "PNG")
 
     def get_tile_list(self):
         return self.tiles
+
+#############################################################################
+if __name__ == "__main__":
+    splitter = TileSplitter("VirtualBox_Dos622_14_06_2024_08_34_46.png")
+    recognizer = TileRecognizer()
+    response = []
+    count = 0
+    for tile in splitter.get_tile_list():
+        value = recognizer.recognize(tile)
+        if value is not None:
+            response.append(value)
+        else:
+            response.append('?')
+            splitter.save_single_tile(tile, count)
+        count += 1
+        if count % splitter.line_length == 0:
+            response.append('\n')
+    print(response)

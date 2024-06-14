@@ -1,9 +1,9 @@
 ﻿#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# StarSagaBot: Star Saga controller based on
-# pygtalkrobot (http://code.google.com/p/pygtalkrobot/)
-# Copyright (c) 2012 Joshua Buergel <jbuergel@gmail.com>
+# StarSagaBot: The controlling bot for Star Saga automation, which handles
+# the Discord integration as well as creating the virtualbox automation.
+# Copyright (c) 2012-24 Joshua Buergel <jbuergel@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,52 +23,74 @@ import sys
 import time
 import yaml
 
-from PyGtalkRobot import GtalkRobot
 from StarSagaAuto import StarSagaAuto
+import discord
+from discord.ext import commands
 
 
-class StarSagaBot(GtalkRobot):
+
+class StarSagaBot():
     auto = None
     current_user = None
     current_user_name = None
     users = None
 
-    def __init__(self, jid, password, users):
-        super().__init__(jid, password)
-        self.users = users
+    def __init__(self, token, users, vboxpath):
+        self.auto = StarSagaAuto(vboxpath)
+        self.auto.start_star_saga()
+        self.intents = discord.Intents.default()
+        self.intents.message_content = True
+        self.bot = commands.Bot(command_prefix='>', intents=intents)
+        self.token = token
+        self.bot.run(self.token)
+        self.current_user
 
-    def process_signin(self, originalMessage, user, messageText, args, force):
-        name = args[0]
-        password = args[1]
+    @commands.Bot.command
+    async def starsaga(ctx):
+        if not self.auto.is_running:
+            await ctx.author.send('Hello! I\'m afraid something is wrong, Star Saga doesn\'t seem to be running. That\'s not something I can fix, you\'ll have to contact the person who created this bot.')
+        else:
+            # game is running, is there another user?
+            if self.current_user is not None:
+                await ctx.author.send('Hello! I\'m afraid that somebody else is playing right now. Try again later! If this persists, you can use the forcestarsaga command, but please be careful with it!')
+            else:
+                print(author)
 
-        # note that we could reject right away if we have a logged in user.
-        # But that leaks (some lame) information, so we will only tell them
-        # someone else is logged in if their credentials are OK.
-        for check_user in self.users:
-            if (check_user['name'] == name and
-                    check_user['password'] == password):
-                if self.current_user and not force:
-                    self.replyMessage(originalMessage,
-                                      user,
-                                      'Sorry, {0} is still logged in.'.format(
-                                      self.current_user_name))
-                else:
-                    self.replyMessage(originalMessage,
-                                      user,
-                                      self.auto.screen_shot())
-                    self.current_user = user
-                    self.current_user_name = name
-                return
-        # failed to find the user
-        self.replyMessage(originalMessage,
-                          user,
-                          'whoooooooo are you who who who who')
+    @commands.Bot.command
+    async def stopsaga(ctx):
+        if not self.auto.is_running:
+            await ctx.author.send('Hello! I\'m afraid something is wrong, Star Saga doesn\'t seem to be running. That\'s not something I can fix, you\'ll have to contact the person who created this bot.')
+        else:
+            # game is running, is there another user?
+            if self.current_user is not None:
+                await ctx.author.send('Hello! I\'m afraid that somebody else is playing right now. Try again later! If this persists, you can use the forcestarsaga command, but please be careful with it!')
+            else:
+                print(author)
 
-    # This method is used to log in
-    def command_001_signin(self, originalMessage, user, messageText, args):
-        '''signin ([\S]*) ([\S]*)$(?i)'''
-        self.process_signin(originalMessage, user, messageText, args, False)
+    def stop_system(self):
+        self.auto.stop_star_saga()
 
+    @classmethod
+    def from_config(cls):
+        try:
+            f = open('config.yaml')
+            config_map = yaml.safe_load(f)
+            f.close()
+            return cls(config_map['discordtoken'],
+                       config_map['users'],
+                       config_map['vboxpath'])
+        except Exception as e:
+            print('Failed to start bot')
+            raise
+
+#############################################################################
+if __name__ == "__main__":
+    bot = StarSagaBot.from_config()
+    bot.stop_system()
+
+
+
+"""
     # This method is used to log out
     def command_002_signout(self, originalMessage, user, messageText, args):
         '''signout'''
@@ -118,41 +140,4 @@ class StarSagaBot(GtalkRobot):
             self.replyMessage(originalMessage,
                               user,
                               'Command rejected - you aren\'t logged in!')
-
-    def start_system(self):
-        import pdb; pdb.set_trace()
-        self.auto = StarSagaAuto()
-        self.auto.start_star_saga()
-        self.startBot()
-
-    def stop_system(self):
-        self.stopBot()
-        self.auto.stop_star_saga()
-
-    def load_creds():
-        try:
-            f = open('creds.yaml')
-            config_map = yaml.safe_load(f)
-            f.close()
-            return config_map
-        except Exception as e:
-            print('Failed to open creds.yaml')
-
-    @classmethod
-    def from_config(cls):
-        try:
-            f = open('creds.yaml')
-            config_map = yaml.safe_load(f)
-            f.close()
-            return cls(config_map['jid'],
-                       config_map['password'],
-                       config_map['users'])
-        except Exception as e:
-            print('Failed to open creds.yaml')
-            raise
-
-#############################################################################
-if __name__ == "__main__":
-    bot = StarSagaBot.from_config()
-    bot.start_system()
-    bot.stop_system()
+"""
