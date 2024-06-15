@@ -212,7 +212,7 @@ class StarSagaAuto:
 
     def stop_star_saga(self):
         if self.session is not None:
-            self.session.console.powerDown()
+            self.session.console.power_down()
 
     def screen_shot_to_file(self, file_name):
         # for some reason, on the latest VirtualBox API, this call is resulting in a screen

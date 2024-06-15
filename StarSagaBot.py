@@ -27,8 +27,7 @@ from StarSagaAuto import StarSagaAuto
 import discord
 from discord.ext import commands
 
-
-
+# StarSagaBot keeps track of all of our other state, as well as containing the automation
 class StarSagaBot():
     auto = None
     current_user = None
@@ -36,36 +35,11 @@ class StarSagaBot():
     users = None
 
     def __init__(self, token, users, vboxpath):
+        self.users = users
         self.auto = StarSagaAuto(vboxpath)
         self.auto.start_star_saga()
-        self.intents = discord.Intents.default()
-        self.intents.message_content = True
-        self.bot = commands.Bot(command_prefix='>', intents=intents)
         self.token = token
-        self.bot.run(self.token)
-        self.current_user
-
-    @commands.Bot.command
-    async def starsaga(ctx):
-        if not self.auto.is_running:
-            await ctx.author.send('Hello! I\'m afraid something is wrong, Star Saga doesn\'t seem to be running. That\'s not something I can fix, you\'ll have to contact the person who created this bot.')
-        else:
-            # game is running, is there another user?
-            if self.current_user is not None:
-                await ctx.author.send('Hello! I\'m afraid that somebody else is playing right now. Try again later! If this persists, you can use the forcestarsaga command, but please be careful with it!')
-            else:
-                print(author)
-
-    @commands.Bot.command
-    async def stopsaga(ctx):
-        if not self.auto.is_running:
-            await ctx.author.send('Hello! I\'m afraid something is wrong, Star Saga doesn\'t seem to be running. That\'s not something I can fix, you\'ll have to contact the person who created this bot.')
-        else:
-            # game is running, is there another user?
-            if self.current_user is not None:
-                await ctx.author.send('Hello! I\'m afraid that somebody else is playing right now. Try again later! If this persists, you can use the forcestarsaga command, but please be careful with it!')
-            else:
-                print(author)
+        print(users)
 
     def stop_system(self):
         self.auto.stop_star_saga()
@@ -83,11 +57,36 @@ class StarSagaBot():
             print('Failed to start bot')
             raise
 
-#############################################################################
-if __name__ == "__main__":
-    bot = StarSagaBot.from_config()
-    bot.stop_system()
+# Create our Star Saga bot and the discord bot
+discord_intents = discord.Intents.default()
+discord_intents.message_content = True
+discord_bot = commands.Bot(command_prefix='>', intents=discord_intents)
 
+@discord_bot.command()
+async def starsaga(ctx):
+    if not star_saga_bot.auto.is_running:
+        await ctx.author.send('Hello! I\'m afraid something is wrong, Star Saga doesn\'t seem to be running. That\'s not something I can fix, you\'ll have to contact the person who created this bot.')
+    else:
+        # game is running, is there another user?
+        if star_saga_bot.current_user is not None:
+            await ctx.author.send('Hello! I\'m afraid that somebody else is playing right now. Try again later! If this persists, you can use the forcestarsaga command, but please be careful with it!')
+        else:
+            print(ctx.author)
+
+@discord_bot.command()
+async def stopsaga(ctx):
+    if not star_saga_bot.auto.is_running:
+        await ctx.author.send('Hello! I\'m afraid something is wrong, Star Saga doesn\'t seem to be running. That\'s not something I can fix, you\'ll have to contact the person who created this bot.')
+    else:
+        # game is running, is there another user?
+        if star_saga_bot.current_user is not None:
+            await ctx.author.send('Hello! I\'m afraid that somebody else is playing right now. Try again later! If this persists, you can use the forcestarsaga command, but please be careful with it!')
+        else:
+            print(ctx.author)
+
+star_saga_bot = StarSagaBot.from_config()
+discord_bot.run(star_saga_bot.token)
+star_saga_bot.stop_system()
 
 
 """
