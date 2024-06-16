@@ -17,7 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import virtualbox
-from time import sleep, time
+from time import time
+import asyncio
 import os
 import subprocess
 from TileRecognizer import TileRecognizer
@@ -161,7 +162,7 @@ class StarSagaAuto:
             output_keys.append(key_code[-1] + self.KEY_UP)
         return key_code
 
-    def send_keys(self, chars):
+    async def send_keys(self, chars):
         keys = []
         if not self.extended_keypress(keys, chars):
             for key in chars:
@@ -169,12 +170,12 @@ class StarSagaAuto:
                     self.shifted_keypress(keys, key)
         if keys:
             self.session.console.keyboard.put_scancodes(keys)
-            sleep(0.1)
+            await asyncio.sleep(0.1)
 
-    def send_enter(self):
-        self.send_keys(['ENTER'])
+    async def send_enter(self):
+        await self.send_keys(['ENTER'])
 
-    def start_star_saga(self):
+    async def start_star_saga(self):
         try:
             self.virtual_box_manager = virtualbox.VirtualBox()
             self.session = virtualbox.Session()
@@ -187,7 +188,7 @@ class StarSagaAuto:
             # we need to wait until the screen is ready, you don't get the resolution
             # right away when wait_for_completion() returns
             while self.screen_info[0] == 0:
-                sleep(0.25)
+                await asyncio.sleep(0.25)
                 self.screen_info = self.session.console.display.get_screen_resolution(0)
             # check to make sure that the screen is the one we expect
             # we'll try a maximum of ten times before we give up
@@ -198,19 +199,19 @@ class StarSagaAuto:
                     screen_found = True
                     break
                 else:
-                    sleep(0.5)
+                    await asyncio.sleep(0.5)
             if not screen_found:
                 # dump out one screen for training purposes
                 self.screen_shot(save_tiles = True)
                 raise Exception("Unexpected opening screen")
             # we need to move to the play screen, with a sequence of "b", "n", and "o"
             # in that order
-            self.send_keys("b")
-            sleep(0.25)
-            self.send_keys("n")
-            sleep(0.25)
-            self.send_keys("o")
-            sleep(0.25)
+            await self.send_keys("b")
+            await asyncio.sleep(0.25)
+            await self.send_keys("n")
+            await asyncio.sleep(0.25)
+            await self.send_keys("o")
+            await asyncio.sleep(0.25)
             # finally, let's confirm that we're on the expected screen
             ready_screen = self.screen_shot(save_tiles = False)
             if not self.check_ready_screen():
@@ -267,11 +268,3 @@ class StarSagaAuto:
         return re.sub('#[\\s]*([0-9]+)',
                       lambda m: PASSAGE_URL.format(m.group(1)),
                       ''.join(response))
-
-#############################################################################
-if __name__ == "__main__":
-    auto = StarSagaAuto("C:/Program Files/Oracle/VirtualBox")
-    auto.start_star_saga()
-    if self.session is not None:
-        print(auto.screen_shot())
-        auto.stop_star_saga()
