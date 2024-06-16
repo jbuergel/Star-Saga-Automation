@@ -25,6 +25,7 @@ from TileRecognizer import TileRecognizer
 from TileSplitter import TileSplitter
 import re
 import pathlib
+import logging
 
 class StarSagaAuto:
     virtual_box_manager = None
@@ -34,6 +35,8 @@ class StarSagaAuto:
     recognizer = TileRecognizer()
 
     def __init__(self, vbox_path):
+        logging.basicConfig(filename='Logs/starsagabot.log', level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
         self.vbox_manage_path = vbox_path + "/VBoxManage"
 
     scancodes = {
@@ -130,6 +133,7 @@ class StarSagaAuto:
 
     shiftedScancodes = {
         '*':  0x09,
+        '?':  0x35,
     }
 
     KEY_UP = 0x80
@@ -139,7 +143,7 @@ class StarSagaAuto:
     VBOX_NAME = "Dos622"
 
     def standard_keypress(self, output_keys, key):
-        key_code = self.scancodes.get(key, None)
+        key_code = self.scancodes.get(key.lower(), None)
         if key_code:
             output_keys.append(key_code)
             output_keys.append(key_code + self.KEY_UP)
@@ -163,6 +167,7 @@ class StarSagaAuto:
         return key_code
 
     async def send_keys(self, chars):
+        self.logger.info('Sending keys: {0}'.format(chars))
         keys = []
         if not self.extended_keypress(keys, chars):
             for key in chars:
@@ -171,9 +176,6 @@ class StarSagaAuto:
         if keys:
             self.session.console.keyboard.put_scancodes(keys)
             await asyncio.sleep(0.1)
-
-    async def send_enter(self):
-        await self.send_keys(['ENTER'])
 
     async def start_star_saga(self):
         try:

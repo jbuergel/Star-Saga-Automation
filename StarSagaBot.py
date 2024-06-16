@@ -208,3 +208,4 @@ star_saga_bot.logger.info('Done stopping system.')
 ###
 # need to fix ?
 # need special keys
+# fix missing tiles
