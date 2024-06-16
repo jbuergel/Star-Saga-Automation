@@ -35,7 +35,6 @@ from discord.ext import commands
 class StarSagaBot():
     auto = None
     current_user = None
-    current_user_name = None
     users = None
 
     def __init__(self, token, users, vboxpath):
@@ -106,9 +105,10 @@ async def starsaga(ctx):
             else:
                 # OK, they're on the list, and nobody else has locked the bot, so they're now the 
                 # current user
-                star_saga_bot.current_user = ctx.author
+                star_saga_bot.current_user = str(ctx.author)
                 star_saga_bot.logger.info('Starting session for {0}'.format(ctx.author))
                 await ctx.author.send('Great, you\'re now the current player. While you\'re the current player, messages sent in this chat will be relayed to the game, and I\'ll send along the resulting screen. When done, please send "$stopsaga" to complete your session.')
+                await ctx.author.send(star_saga_bot.auto.screen_shot())
 
 @discord_bot.command(brief='Stop a session,', description='Ends a session with the game. Will fail if you aren\'t the current user or if you\'re not on the first screen.')
 async def stopsaga(ctx):
@@ -118,7 +118,7 @@ async def stopsaga(ctx):
             await ctx.author.send(error_message)
         else:
             # Is this the current user?
-            if star_saga_bot.current_user == ctx.author:
+            if star_saga_bot.current_user == str(ctx.author):
                 # this is the logged in user, check if we're on the correct screen
                 if star_saga_bot.auto.check_ready_screen:
                     await ctx.author.send('Great, I\ve logged you off.')
@@ -139,7 +139,7 @@ async def screen(ctx):
             await ctx.author.send(error_message)
         else:
             # Is this the current user or is there no user?
-            if (star_saga_bot.current_user is None) or (star_saga_bot.current_user == ctx.author):
+            if (star_saga_bot.current_user is None) or (star_saga_bot.current_user == str(ctx.author)):
                 star_saga_bot.logger.info('Sending screen shot')
                 await ctx.author.send(star_saga_bot.auto.screen_shot())
             else:
@@ -154,7 +154,7 @@ async def forcestarsaga(ctx):
             await ctx.author.send(error_message)
         else:
             # This is a force, so they're now the current user
-            star_saga_bot.current_user = ctx.author
+            star_saga_bot.current_user = str(ctx.author)
             star_saga_bot.logger.info('Force starting session for {0}'.format(ctx.author))
             await ctx.author.send('Great, you\'re now the current player. While you\'re the current player, messages sent in this chat will be relayed to the game, and I\'ll send along the resulting screen. When done, please send "$stopsaga" to complete your session.')
 
@@ -180,12 +180,12 @@ async def on_message(message):
                     # great! we're going to forward this message to the game and then relay
                     # back the resulting screen
                     await star_saga_bot.auto.send_keys(message.content)
-                    star_saga_bot.auto.screen_shot()
+                    await message.author.send(star_saga_bot.auto.screen_shot())
                 # check to see if this is one of our known users - if so
                 # we'll let them know that they're not steering the ship right now
                 elif str(message.author) in star_saga_bot.users:
                     star_saga_bot.logger.info('Ignoring DM, not current player')
-                    await ctx.author.send('I\'m sorry, you don\'t seem to be the current player, so I\'m ignoring this message. {0} is currently playing.'.format(star_saga_bot.current_user))
+                    await message.author.send('I\'m sorry, you don\'t seem to be the current player, so I\'m ignoring this message. {0} is currently playing.'.format(star_saga_bot.current_user))
                 # not a known user - how did they DM us? Dunno, but we'll just silently ignore it
                 else:
                     star_saga_bot.logger.info('DM from unknown user')
@@ -204,3 +204,7 @@ discord_bot.run(star_saga_bot.token)
 star_saga_bot.logger.info('Done with discord bot.')
 star_saga_bot.stop_system()
 star_saga_bot.logger.info('Done stopping system.')
+
+###
+# need to fix ?
+# need special keys
