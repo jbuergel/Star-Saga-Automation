@@ -134,6 +134,7 @@ class StarSagaAuto:
     KEY_UP = 0x80
     PASSAGE_URL = 'http://www.houseofslack.com/josh/starsaga/passages/{0}.png'
     OPENING_SCREEN_CHECK = 'Please Describe Your Monitor:'
+    READY_SCREEN_CHECK = 'Select one of the above characters or:'
     VBOX_NAME = "Dos622"
 
     def standard_keypress(self, output_keys, key):
@@ -167,7 +168,7 @@ class StarSagaAuto:
                 if not self.standard_keypress(keys, key):
                     self.shifted_keypress(keys, key)
         if keys:
-            self.session.console.keyboard.putScancodes(keys)
+            self.session.console.keyboard.put_scancodes(keys)
             sleep(0.1)
 
     def send_enter(self):
@@ -202,10 +203,26 @@ class StarSagaAuto:
                 # dump out one screen for training purposes
                 self.screen_shot(save_tiles = True)
                 raise Exception("Unexpected opening screen")
+            # we need to move to the play screen, with a sequence of "b", "n", and "o"
+            # in that order
+            self.send_keys("b")
+            sleep(0.25)
+            self.send_keys("n")
+            sleep(0.25)
+            self.send_keys("o")
+            sleep(0.25)
+            # finally, let's confirm that we're on the expected screen
+            ready_screen = self.screen_shot(save_tiles = False)
+            if not self.check_ready_screen():
+                raise Exception("Did not get to the ready screen")
         except Exception as e:
             print("Problem starting star saga bot: {}".format(e))
             self.session = None
             raise
+
+    def check_ready_screen(self):
+        ready_screen = self.screen_shot(save_tiles = False)
+        return self.READY_SCREEN_CHECK in ready_screen
 
     def is_running(self):
         return self.session is not None
@@ -246,7 +263,7 @@ class StarSagaAuto:
             count += 1
             if count % splitter.line_length == 0:
                 response.append('\n')
-        #os.remove(file_name)
+        os.remove(file_name)
         return re.sub('#[\\s]*([0-9]+)',
                       lambda m: PASSAGE_URL.format(m.group(1)),
                       ''.join(response))

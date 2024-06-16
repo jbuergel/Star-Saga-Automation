@@ -6,7 +6,7 @@
 ** Use VBoxManage or the VirtualBox Manager GUI to make changes.
 -->
 <VirtualBox xmlns="http://www.virtualbox.org/" version="1.19-windows">
-  <Machine uuid="{efa23b7f-8651-4683-b500-7a997b9ec8f6}" name="Dos622" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2024-06-15T00:23:42Z">
+  <Machine uuid="{efa23b7f-8651-4683-b500-7a997b9ec8f6}" name="Dos622" OSType="DOS" snapshotFolder="Snapshots" lastStateChange="2024-06-16T04:38:48Z">
     <MediaRegistry>
       <HardDisks>
         <HardDisk uuid="{02fc95f7-6939-4dde-ab8a-5ef6a598c50a}" location="Dos622.vdi" format="VDI" type="Normal"/>
@@ -102,7 +102,7 @@
       </SharedFolders>
       <Clipboard/>
       <GuestProperties>
-        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1718409251286696600" flags="RDONLYGUEST"/>
+        <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="en_US" timestamp="1718475896924405200" flags="RDONLYGUEST"/>
       </GuestProperties>
       <StorageControllers>
         <StorageController name="Floppy" type="I82078" PortCount="1" useHostIOCache="true" Bootable="true">
