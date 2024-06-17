@@ -26,6 +26,7 @@ from TileSplitter import TileSplitter
 import re
 import pathlib
 import logging
+import shutil
 
 class StarSagaAuto:
     virtual_box_manager = None
@@ -141,6 +142,9 @@ class StarSagaAuto:
     OPENING_SCREEN_CHECK = 'Please Describe Your Monitor:'
     READY_SCREEN_CHECK = 'Select one of the above characters or:'
     VBOX_NAME = "Dos622"
+    VBOX_FILE = "Dos622.vdi"
+    VBOX_BACKUP_FILE = "Dos622-backup.vdi"
+    VBOX_BACKUP_FILE_2 = "Dos622-backup2.vdi"
 
     def standard_keypress(self, output_keys, key):
         key_code = self.scancodes.get(key.lower(), None)
@@ -177,8 +181,17 @@ class StarSagaAuto:
             self.session.console.keyboard.put_scancodes(keys)
             await asyncio.sleep(0.1)
 
+    def backup_image(self):
+        # we're going to move the current 1 backup to 2 (if any) and copy
+        # the live image to 1
+        if os.path.exists(self.VBOX_BACKUP_FILE) and os.path.isfile(self.VBOX_BACKUP_FILE):
+            shutil.copy(self.VBOX_BACKUP_FILE, self.VBOX_BACKUP_FILE_2)
+        # now, copy the live image to the first backup
+        shutil.copy(self.VBOX_FILE, self.VBOX_BACKUP_FILE)
+
     async def start_star_saga(self):
         try:
+            self.backup_image()
             self.virtual_box_manager = virtualbox.VirtualBox()
             self.session = virtualbox.Session()
             self.machine = self.virtual_box_manager.find_machine(self.VBOX_NAME)

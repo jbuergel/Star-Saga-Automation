@@ -91,7 +91,7 @@ discord_bot = commands.Bot(command_prefix=COMMAND_PREFIX, description='A bot tha
 #####################################################
 # event and command handlers
 
-@discord_bot.command(brief='Start a session.', description='Start a session with the game. Will fail if another user has a session.')
+@discord_bot.command(brief='Start a session.', description='Start a session with the game. Will fail if another user has a session. While playing, you send commands via DMs to the bot, and it will respond with screens. For special characters, type them out, such as \'ESC\' or \'ENTER\'.')
 async def starsaga(ctx):
     async with star_saga_bot.lock:
         error_message = star_saga_bot.validate_user(ctx.author, 'starsaga')
@@ -121,7 +121,7 @@ async def stopsaga(ctx):
             if star_saga_bot.current_user == str(ctx.author):
                 # this is the logged in user, check if we're on the correct screen
                 if star_saga_bot.auto.check_ready_screen:
-                    await ctx.author.send('Great, I\ve logged you off.')
+                    await ctx.author.send('Great, I\'ve logged you off.')
                     star_saga_bot.logger.info('Ending session for {0}'.format(ctx.author))
                     star_saga_bot.current_user = None
                 else:
@@ -204,8 +204,3 @@ discord_bot.run(star_saga_bot.token)
 star_saga_bot.logger.info('Done with discord bot.')
 star_saga_bot.stop_system()
 star_saga_bot.logger.info('Done stopping system.')
-
-###
-# need to fix ?
-# need special keys
-# fix missing tiles

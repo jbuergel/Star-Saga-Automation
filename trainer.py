@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from PyQt4.Qt import *
-from PyQt4 import QtGui
+from PyQt5.Qt import *
+from PyQt5 import QtGui
 import sys
 from TileRecognizer import TileRecognizer
 
@@ -44,12 +44,12 @@ class MainWindow(QMainWindow):
         self.width = 600
         self.btn1 = QPushButton("Train", self.cw)
         self.btn1.setGeometry(QRect(5, 5, 100, 30))
-        self.connect(self.btn1, SIGNAL("clicked()"), self.doit)
+        self.btn1.clicked.connect(self.doit)
         train_tiles.find_missing_tiles()
         self.text_input = QLineEdit(self.cw)
         self.text_input.setGeometry(5, 40, 100, 30)
         self.text_input.setValidator(QRegExpValidator(QRegExp("[\\S ]?")))
-        self.connect(self.text_input, SIGNAL("returnPressed()"), self.doit)
+        self.text_input.returnPressed.connect(self.doit)
         self.display_tile()
 
     def doit(self):
@@ -62,7 +62,7 @@ class App(QApplication):
     def __init__(self, *args):
         QApplication.__init__(self, *args)
         self.main = MainWindow()
-        self.connect(self, SIGNAL("lastWindowClosed()"), self.byebye)
+        #self.main.lastWindowClosed.connect(self.byebye)
         self.main.show()
 
     def byebye(self):

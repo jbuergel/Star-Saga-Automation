@@ -11,17 +11,17 @@ The automation solution has a few parts.  First is a Google chat robot that resp
         - discord_id_0
         - discord_id_1
 
+Note that you will need to create your own bot using Discord and get the token from them so your bot can sign in (https://discord.com/developers/applications). The users who are going to play need to be added to the users array in config.yaml. Finally, the automation needs to know where the VBoxManage.exe executable lives so it can take screen shots. I ran this thing on Windows, I suppose it would work on other platforms.
+
 In order to operate, Oracle's VirtualBox (https://www.virtualbox.org/) must be installed on the host box. In addition, the SDK needs to be installed and setup. This bot makes use of some Python dependencies: Pillow, pyqt5, discord, and pyyaml, all installable via pip. Finally, it expects the VBoxManage.exe executable to be in the same directory as StarSagaBoy.py, to facilitate taking screen shots.
 
 Usage
 ====================
-StarSagaBot.py can simply be run with no options.  It will read its config from config.yaml and start the VirtualBox instance named Dos622.  A sample image is included with this repo, and should be added to VirtualBox.  The image contains StarSaga already installed.
+StarSagaBot.py can simply be run with no options.  It will read its config from config.yaml and start the VirtualBox instance named Dos622.  A sample image is included with this repo, and should be added to VirtualBox.  The image contains StarSaga already installed. Before running the automation, you should start the image, make sure that it runs (you might need to re-bind the network adapater to get it to stop complaining), and make sure that the shared directory that it uses exists (by default, C:\temp\vb, but you can change that). During this first run, you should also create a new game and add the characters you want to play in it.
 
 trainer.py is a training program used to train the custom-built OCR module used to translate the 40x25 DOS screen into characters.  If any unknown characters are found during play, a tile is saved in the tiles directory. Running trainer.py allows you to translate the characters, with the new data saved out to trained_data.
 
 splitter.py is a program used to split a screen shot from VirtualBox and split it into a bunch of tiles.  It's probably not really necessary any more.
-
-For the automation to work properly, it expects the virtual machine to have been run at least once, so it's available to be started. You should run the game once, create a new game, and add the characters that will be playing, and then quit out, so the game is in a state to resume.
 
 Map
 ====================

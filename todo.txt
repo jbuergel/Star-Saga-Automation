@@ -1,12 +1,3 @@
-x -> fixed width font
-* -> turn text into links
-* -> give screen shot on log in
-* -> save off tiles that are not recognized (and replace with strange character)
-* -> return text to caller
-* -> force login command
-* -> extended keyboard commands
-* -> '*' doesn't work for some reason
-* -> backup save files
 * -> javascript map
 * 	-> drag markers
 * 	-> save markers
