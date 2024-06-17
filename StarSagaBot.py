@@ -51,9 +51,9 @@ class StarSagaBot():
         await self.auto.start_star_saga()        
         self.logger.info('Completed star saga automation.')
 
-    def stop_system(self):
+    async def stop_system(self):
         self.logger.info('Stopping star saga bot.')
-        self.auto.stop_star_saga()
+        await self.auto.stop_star_saga()
         self.logger.info('Completed stopping star saga bot.')
 
     def validate_user(self, user, function_name):
@@ -202,5 +202,5 @@ asyncio.run(star_saga_bot.start_system())
 star_saga_bot.logger.info('Starting discord bot.')
 discord_bot.run(star_saga_bot.token)
 star_saga_bot.logger.info('Done with discord bot.')
-star_saga_bot.stop_system()
+asyncio.run(star_saga_bot.stop_system())
 star_saga_bot.logger.info('Done stopping system.')

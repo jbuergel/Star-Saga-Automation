@@ -243,9 +243,16 @@ class StarSagaAuto:
     def is_running(self):
         return self.session is not None
 
-    def stop_star_saga(self):
+    async def stop_star_saga(self):
         if self.session is not None:
-            self.session.console.power_down()
+            if not self.check_ready_screen():
+                raise Exception("Tried to quit not on ready screen!")
+            else:
+                await self.send_keys("q")
+                await asyncio.sleep(0.25)
+                await self.send_keys("ENTER")
+                await asyncio.sleep(0.25)
+                self.session.console.power_down()
 
     def screen_shot_to_file(self, file_name):
         # for some reason, on the latest VirtualBox API, this call is resulting in a screen

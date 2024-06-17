@@ -13,7 +13,13 @@ The automation solution has a few parts.  First is a Google chat robot that resp
 
 Note that you will need to create your own bot using Discord and get the token from them so your bot can sign in (https://discord.com/developers/applications). The users who are going to play need to be added to the users array in config.yaml. Finally, the automation needs to know where the VBoxManage.exe executable lives so it can take screen shots. I ran this thing on Windows, I suppose it would work on other platforms.
 
-In order to operate, Oracle's VirtualBox (https://www.virtualbox.org/) must be installed on the host box. In addition, the SDK needs to be installed and setup. This bot makes use of some Python dependencies: Pillow, pyqt5, discord, and pyyaml, all installable via pip. Finally, it expects the VBoxManage.exe executable to be in the same directory as StarSagaBoy.py, to facilitate taking screen shots.
+In order to operate, Oracle's VirtualBox (https://www.virtualbox.org/) must be installed on the host box. In addition, the SDK needs to be installed and setup. This actually is more annoying than it was a bit ago, as the SDK uses distutils, which were removed from Python 3.12. Seems to run on 3.11, though. On my machine, I installed Python 3.11 and ran:
+
+py -3.11 vboxapisetup.py install
+
+from the SDK installed directory.
+
+This bot makes use of some Python dependencies: Pillow, pyqt5, discord, pywin32, virtualbox, and pyyaml, all installable via pip. Finally, it expects the VBoxManage.exe executable to be in the same directory as StarSagaBoy.py, to facilitate taking screen shots.
 
 Usage
 ====================

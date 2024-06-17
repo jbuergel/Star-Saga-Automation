@@ -1,5 +1,6 @@
-* -> javascript map
-* 	-> drag markers
-* 	-> save markers
-* 	-> restore markers
-* 	-> add captions to markers
+-> graceful quit out in the game when things shut down
+-> javascript map
+	-> drag markers
+	-> save markers
+	-> restore markers
+	-> add captions to markers
