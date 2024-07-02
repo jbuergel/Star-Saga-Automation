@@ -9,3 +9,5 @@
 *.vbox-prev
 *windows.vbox
 /screens
+*backup*.vdi
+
