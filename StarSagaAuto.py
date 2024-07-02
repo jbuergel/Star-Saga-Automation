@@ -214,7 +214,7 @@ class StarSagaAuto:
                     screen_found = True
                     break
                 else:
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(1)
             if not screen_found:
                 # dump out one screen for training purposes
                 self.screen_shot(save_tiles = True)

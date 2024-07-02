@@ -1,4 +1,7 @@
 -> graceful quit out in the game when things shut down
+-> get the resources back on the website
+-> markdown formatting for messages
+-> make sure links to paragraphs work properly
 -> javascript map
 	-> drag markers
 	-> save markers
